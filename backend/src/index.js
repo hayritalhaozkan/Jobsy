@@ -14,14 +14,14 @@ async function startServer() {
   try {
     
     await pool.query("SELECT 1");
-    console.log("✅ DB connected");
+    console.log("DB connected");
   } catch (err) {
     console.error("Failed to start server: Could not connect to DB:", err);
     process.exit(1);
   }
 
   app.listen(PORT, () => {
-    console.log(`✅ API running on http://localhost:${PORT}`);
+    console.log(`API running on http://localhost:${PORT}`);
   });
 }
 

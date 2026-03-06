@@ -1,3 +1,59 @@
+/**
+ * @openapi
+ * tags:
+ *   - name: Auth
+ *     description: Authentication endpoints
+ */
+
+/**
+ * @openapi
+ * /api/v1/auth/register:
+ *   post:
+ *     summary: Register user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, password, role]
+ *             properties:
+ *               email: { type: string, example: "user@test.com" }
+ *               password: { type: string, example: "Password123!" }
+ *               role: { type: string, example: "STUDENT" }
+ *     responses:
+ *       201:
+ *         description: Registered
+ *       400:
+ *         description: Bad request
+ */
+
+/**
+ * @openapi
+ * /api/v1/auth/login:
+ *   post:
+ *     summary: Login user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, password]
+ *             properties:
+ *               email: { type: string, example: "user@test.com" }
+ *               password: { type: string, example: "Password123!" }
+ *     responses:
+ *       200:
+ *         description: Tokens returned
+ *       401:
+ *         description: Invalid credentials
+ */
+
+
+
 // src/routes/auth.js
 const express = require("express");
 const bcrypt = require("bcryptjs");

@@ -6,11 +6,21 @@ const morgan = require('morgan');
 const { rateLimiter } = require('./middleware/rateLimiter');
 const { errorHandler } = require('./middleware/errorHandler');
 
+const jobsRoutes = require("./routes/jobs");
+
+const universitiesRoutes = require("./routes/universities");
+const adminRoutes = require("./routes/admin");
+
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./docs/swagger");
+
 const authRoutes = require('./routes/auth');
 
 const { authenticateToken, authorizeRoles } = require("./middleware/auth");
 
 const app = express();
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 //Security headerları ekler
 app.use(helmet());
@@ -24,6 +34,8 @@ app.use(express.json({ limit: '1mb' }));
 
 //gelen her isteği loglar
 app.use(morgan('dev'))
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 //health endpointi(uygulama ayakta mı test etmek için)
 app.get("/health", (req, res) => res.json({ status: "ok" }));
@@ -41,7 +53,9 @@ app.get("/api/v1/admin/ping", authenticateToken, authorizeRoles("ADMIN"), (req, 
   res.json({ ok: true });
 });
 
-
+app.use("/api/v1/universities", universitiesRoutes);
+app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/jobs", jobsRoutes);
 
 //404 handler
 app.use((req, res) => res.status(404).json({ error: "Not Found" }));
