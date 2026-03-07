@@ -11,16 +11,18 @@ const jobsRoutes = require("./routes/jobs");
 const universitiesRoutes = require("./routes/universities");
 const adminRoutes = require("./routes/admin");
 
-const swaggerUi = require("swagger-ui-express");
-const swaggerSpec = require("./docs/swagger");
-
 const authRoutes = require('./routes/auth');
 
 const { authenticateToken, authorizeRoles } = require("./middleware/auth");
 
 const app = express();
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+const enableSwagger = process.env.ENABLE_SWAGGER === "true";
+if (enableSwagger) {
+  const swaggerUi = require("swagger-ui-express");
+  const swaggerSpec = require("./docs/swagger");
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+}
 
 //Security headerları ekler
 app.use(helmet());
@@ -34,8 +36,6 @@ app.use(express.json({ limit: '1mb' }));
 
 //gelen her isteği loglar
 app.use(morgan('dev'))
-
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 //health endpointi(uygulama ayakta mı test etmek için)
 app.get("/health", (req, res) => res.json({ status: "ok" }));

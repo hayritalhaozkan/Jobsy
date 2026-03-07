@@ -49,6 +49,8 @@ ALTER TABLE jobs ADD COLUMN IF NOT EXISTS contact_phone VARCHAR(50);
 ALTER TABLE jobs ADD COLUMN IF NOT EXISTS contact_email VARCHAR(255);
 ALTER TABLE jobs ADD COLUMN IF NOT EXISTS contact_url TEXT;
 ALTER TABLE jobs ADD COLUMN IF NOT EXISTS contact_note VARCHAR(255);
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS university_id INTEGER REFERENCES universities(id) ON DELETE SET NULL;
 
   -- Import sirasinda duplicate engellemek için:
   DO $$
