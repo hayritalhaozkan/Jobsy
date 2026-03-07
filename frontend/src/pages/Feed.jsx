@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { fetchJobsByUniversity } from "../api/jobs";
 import { fetchUniversities } from "../api/universities";
 import Navbar from "../components/Navbar";
@@ -8,45 +7,26 @@ import UniversityFilterBar from "../components/UniversityFilterBar";
 
 function Feed() {
   const [jobs, setJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [universities, setUniversities] = useState([]);
   const [selectedUniversity, setSelectedUniversity] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const navigate = useNavigate();
+  const DEFAULT_UNIVERSITY_ID = 3;
 
   useEffect(() => {
-    const userRaw = localStorage.getItem("user");
-
-    if (!userRaw) {
-      navigate("/login");
-      return;
-    }
-
-    const user = JSON.parse(userRaw);
-
-    if (!user?.universityId) {
-      navigate("/register");
-      return;
-    }
-
-    async function loadPage() {
+    async function loadData() {
       try {
         setLoading(true);
 
-        // 1) Üniversiteleri çek
         const uniData = await fetchUniversities();
         setUniversities(uniData);
 
-        // 2) Kullanıcının üniversitesini bul
-        const currentUniversity = uniData.find(
-          (u) => Number(u.id) === Number(user.universityId)
-        );
+        const uni = uniData.find(u => Number(u.id) === DEFAULT_UNIVERSITY_ID);
+        setSelectedUniversity(uni);
 
-        setSelectedUniversity(currentUniversity || null);
-
-        // 3) O üniversitenin ilanlarını çek
-        const jobsData = await fetchJobsByUniversity(user.universityId);
+        const jobsData = await fetchJobsByUniversity(DEFAULT_UNIVERSITY_ID);
         setJobs(jobsData);
+
       } catch (err) {
         console.error("Feed load error:", err);
       } finally {
@@ -54,30 +34,29 @@ function Feed() {
       }
     }
 
-    loadPage();
-  }, [navigate]);
+    loadData();
+  }, []);
 
   async function handleChangeUniversity() {
-    const newUniversityId = window.prompt("Yeni üniversite ID gir:");
-    if (!newUniversityId) return;
+    const input = window.prompt("Üniversite ID gir:");
+    if (!input) return;
 
-    const selected = universities.find(
-      (u) => Number(u.id) === Number(newUniversityId)
-    );
+    const nextId = Number(input);
 
-    if (!selected) {
-      alert("Geçersiz üniversite ID");
+    const uni = universities.find(u => Number(u.id) === nextId);
+    if (!uni) {
+      alert("Üniversite bulunamadı");
       return;
     }
 
     try {
       setLoading(true);
-      setSelectedUniversity(selected);
+      setSelectedUniversity(uni);
 
-      const jobsData = await fetchJobsByUniversity(newUniversityId);
+      const jobsData = await fetchJobsByUniversity(nextId);
       setJobs(jobsData);
     } catch (err) {
-      console.error("University switch error:", err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -93,22 +72,15 @@ function Feed() {
           onChange={handleChangeUniversity}
         />
 
-        <div style={styles.header}>
-          <h1 style={styles.title}>İlanlar</h1>
-          <p style={styles.subtitle}>
-            Üniversitene göre part-time fırsatları görüntüle.
-          </p>
-        </div>
+        <h1>İlanlar</h1>
 
         {loading ? (
           <div>Yükleniyor...</div>
         ) : jobs.length === 0 ? (
-          <div style={styles.empty}>
-            Bu üniversite için henüz aktif ilan yok.
-          </div>
+          <div>Bu üniversite için ilan yok</div>
         ) : (
           <div style={styles.grid}>
-            {jobs.map((job) => (
+            {jobs.map(job => (
               <JobCard key={job.id} job={job} />
             ))}
           </div>
@@ -124,26 +96,10 @@ const styles = {
     margin: "0 auto",
     padding: "24px",
   },
-  header: {
-    marginBottom: "16px",
-  },
-  title: {
-    marginBottom: "6px",
-  },
-  subtitle: {
-    marginTop: 0,
-    color: "#6b7280",
-  },
   grid: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
     gap: "16px",
-  },
-  empty: {
-    background: "#fff",
-    padding: "20px",
-    borderRadius: "16px",
-    color: "#6b7280",
   },
 };
 
