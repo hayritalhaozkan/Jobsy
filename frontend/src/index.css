@@ -19,7 +19,11 @@
   -webkit-font-smoothing: antialiased;
 }
 
-html,
+html {
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+
 body,
 #root {
   margin: 0;

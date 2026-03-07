@@ -160,7 +160,7 @@ const styles = {
       "linear-gradient(180deg, #f8fafc 0%, #eef4ff 35%, #ffffff 100%)",
   },
 
-heroSection: {
+  heroSection: {
   position: "relative",
   overflow: "hidden",
   padding: "140px 24px 56px",
