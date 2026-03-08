@@ -8,98 +8,131 @@ import UniversityFilterBar from "../components/UniversityFilterBar";
 function Feed() {
   const [jobs, setJobs] = useState([]);
   const [universities, setUniversities] = useState([]);
-  const [selectedUniversity, setSelectedUniversity] = useState(null);
+  const [selectedUniversityId, setSelectedUniversityId] = useState(3);
   const [loading, setLoading] = useState(true);
 
-  const DEFAULT_UNIVERSITY_ID = 3;
-
   useEffect(() => {
-    async function loadData() {
+    async function loadUniversities() {
       try {
-        setLoading(true);
-
         const uniData = await fetchUniversities();
         setUniversities(uniData);
-
-        const uni = uniData.find(u => Number(u.id) === DEFAULT_UNIVERSITY_ID);
-        setSelectedUniversity(uni);
-
-        const jobsData = await fetchJobsByUniversity(DEFAULT_UNIVERSITY_ID);
-        setJobs(jobsData);
-
       } catch (err) {
-        console.error("Feed load error:", err);
+        console.error("Universities fetch error:", err);
+      }
+    }
+
+    loadUniversities();
+  }, []);
+
+  useEffect(() => {
+    async function loadJobs() {
+      if (!selectedUniversityId) return;
+
+      try {
+        setLoading(true);
+        const jobsData = await fetchJobsByUniversity(selectedUniversityId);
+        setJobs(jobsData);
+      } catch (err) {
+        console.error("Jobs fetch error:", err);
+        setJobs([]);
       } finally {
         setLoading(false);
       }
     }
 
-    loadData();
-  }, []);
-
-  async function handleChangeUniversity() {
-    const input = window.prompt("Üniversite ID gir:");
-    if (!input) return;
-
-    const nextId = Number(input);
-
-    const uni = universities.find(u => Number(u.id) === nextId);
-    if (!uni) {
-      alert("Üniversite bulunamadı");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setSelectedUniversity(uni);
-
-      const jobsData = await fetchJobsByUniversity(nextId);
-      setJobs(jobsData);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }
+    loadJobs();
+  }, [selectedUniversityId]);
 
   return (
-    <>
+    <div style={styles.page}>
       <Navbar />
 
-      <div style={styles.page}>
-        <UniversityFilterBar
-          selectedUniversity={selectedUniversity}
-          onChange={handleChangeUniversity}
-        />
-
-        <h1>İlanlar</h1>
-
-        {loading ? (
-          <div>Yükleniyor...</div>
-        ) : jobs.length === 0 ? (
-          <div>Bu üniversite için ilan yok</div>
-        ) : (
-          <div style={styles.grid}>
-            {jobs.map(job => (
-              <JobCard key={job.id} job={job} />
-            ))}
+      <main style={styles.main}>
+        <div style={styles.container}>
+          <div style={styles.headerBlock}>
+            <h1 style={styles.title}>İlanlar</h1>
+            <p style={styles.subtitle}>
+              Üniversitene göre part-time ve kampüs çevresi fırsatlarını keşfet.
+            </p>
           </div>
-        )}
-      </div>
-    </>
+
+          <UniversityFilterBar
+            universities={universities}
+            selectedUniversityId={selectedUniversityId}
+            onChange={setSelectedUniversityId}
+          />
+
+          {loading ? (
+            <div style={styles.stateBox}>İlanlar yükleniyor...</div>
+          ) : jobs.length === 0 ? (
+            <div style={styles.stateBox}>
+              Bu üniversite için henüz aktif ilan bulunmuyor.
+            </div>
+          ) : (
+            <div style={styles.grid}>
+              {jobs.map((job) => (
+                <JobCard key={job.id} job={job} />
+              ))}
+            </div>
+          )}
+        </div>
+      </main>
+    </div>
   );
 }
 
 const styles = {
   page: {
-    maxWidth: "960px",
-    margin: "0 auto",
-    padding: "24px",
+    minHeight: "100vh",
+    background:
+      "linear-gradient(180deg, #f8fafc 0%, #eef4ff 35%, #ffffff 100%)",
   },
+
+  main: {
+    paddingTop: "110px",
+    paddingBottom: "60px",
+  },
+
+  container: {
+    maxWidth: "1180px",
+    margin: "0 auto",
+    padding: "0 24px",
+  },
+
+  headerBlock: {
+    marginBottom: "18px",
+  },
+
+  title: {
+    margin: 0,
+    fontSize: "clamp(34px, 5vw, 56px)",
+    lineHeight: 1.04,
+    letterSpacing: "-0.03em",
+    color: "#0f172a",
+  },
+
+  subtitle: {
+    marginTop: "12px",
+    marginBottom: 0,
+    color: "#64748b",
+    fontSize: "17px",
+    lineHeight: 1.7,
+    maxWidth: "700px",
+  },
+
   grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-    gap: "16px",
+  display: "flex",
+  flexDirection: "column",
+  gap: "16px",
+  },
+
+  stateBox: {
+    background: "rgba(255,255,255,0.82)",
+    border: "1px solid rgba(226,232,240,0.9)",
+    borderRadius: "20px",
+    padding: "24px",
+    color: "#475569",
+    boxShadow: "0 10px 30px rgba(15, 23, 42, 0.05)",
   },
 };
 

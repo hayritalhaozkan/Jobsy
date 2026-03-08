@@ -1,8 +1,29 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import jobsyLogo from "../assets/jobsy-logo.png";
 
 function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const token = localStorage.getItem("token");
+  const userRaw = localStorage.getItem("user");
+
+  let user = null;
+  try {
+    user = userRaw ? JSON.parse(userRaw) : null;
+  } catch {
+    user = null;
+  }
+
+  const isAuthenticated = Boolean(token && user);
+  const isEmployer = user?.role === "EMPLOYER";
+  const isStudent = user?.role === "STUDENT";
+
+  function handleLogout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  }
 
   return (
     <div style={styles.outer}>
@@ -17,16 +38,71 @@ function Navbar() {
         </Link>
 
         <div style={styles.actions}>
-          <button style={styles.textButton} onClick={() => navigate("/login")}>
-            Giriş Yap
-          </button>
+          {!isAuthenticated ? (
+            <>
+              <button
+                style={styles.textButton}
+                onClick={() => navigate("/login")}
+              >
+                Giriş Yap
+              </button>
 
-          <button
-            style={styles.primaryButton}
-            onClick={() => navigate("/register")}
-          >
-            Kayıt Ol
-          </button>
+              <button
+                style={styles.primaryButton}
+                onClick={() => navigate("/register")}
+              >
+                Kayıt Ol
+              </button>
+            </>
+          ) : (
+            <>
+              {isStudent && (
+                <button
+                  style={{
+                    ...styles.textButton,
+                    ...(location.pathname === "/feed"
+                      ? styles.activeTextButton
+                      : {}),
+                  }}
+                  onClick={() => navigate("/feed")}
+                >
+                  İlanlar
+                </button>
+              )}
+
+              {isEmployer && (
+                <>
+                  <button
+                    style={{
+                      ...styles.textButton,
+                      ...(location.pathname === "/employer/dashboard"
+                        ? styles.activeTextButton
+                        : {}),
+                    }}
+                    onClick={() => navigate("/employer/dashboard")}
+                  >
+                    Panel
+                  </button>
+
+                  <button
+                    style={{
+                      ...styles.textButton,
+                      ...(location.pathname === "/employer/jobs"
+                        ? styles.activeTextButton
+                        : {}),
+                    }}
+                    onClick={() => navigate("/employer/jobs")}
+                  >
+                    İlanlarım
+                  </button>
+                </>
+              )}
+
+              <button style={styles.primaryButton} onClick={handleLogout}>
+                Çıkış Yap
+              </button>
+            </>
+          )}
         </div>
       </header>
     </div>
@@ -46,22 +122,19 @@ const styles = {
   },
 
   floatingIsland: {
-    width: "min(1180px, calc(100% - 32px))",
+    width: "min(1320px, calc(100% - 32px))",
     height: "72px",
-    padding: "0 18px",
+    padding: "0 24px",
     borderRadius: "24px",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-
     background: "rgba(255, 255, 255, 0.58)",
     border: "1px solid rgba(255, 255, 255, 0.55)",
     backdropFilter: "blur(22px) saturate(160%)",
     WebkitBackdropFilter: "blur(22px) saturate(160%)",
-
     boxShadow:
       "0 10px 30px rgba(15, 23, 42, 0.10), inset 0 1px 0 rgba(255,255,255,0.35)",
-
     pointerEvents: "auto",
   },
 
@@ -101,6 +174,10 @@ const styles = {
     padding: "10px 14px",
     borderRadius: "12px",
     transition: "background 0.2s ease",
+  },
+
+  activeTextButton: {
+    background: "rgba(255,255,255,0.55)",
   },
 
   primaryButton: {

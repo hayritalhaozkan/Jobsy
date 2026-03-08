@@ -34,7 +34,7 @@
  *         application/json:
  *           schema:
  *             type: object
- *             required: [title, description, universityId]
+ *             required: [title, description, universityId, contactPerson]
  *             properties:
  *               title:
  *                 type: string
@@ -45,6 +45,18 @@
  *               universityId:
  *                 type: integer
  *                 example: 3
+ *               salary:
+ *                 type: string
+ *                 example: Saatlik 150 TL
+ *               workSchedule:
+ *                 type: string
+ *                 example: Hafta içi 16:00-20:00
+ *               address:
+ *                 type: string
+ *                 example: Selçuklu / Konya
+ *               contactPerson:
+ *                 type: string
+ *                 example: Ahmet Yılmaz
  *               contactWhatsapp:
  *                 type: string
  *                 example: "+905551112233"
@@ -59,10 +71,12 @@
  *                 example: https://example.com
  *               contactNote:
  *                 type: string
- *                 example: 09:00-17:00 arası
+ *                 example: 09:00-17:00 arası iletişime geçin
  *     responses:
  *       201:
  *         description: Job created
+ *       400:
+ *         description: Validation error
  *       401:
  *         description: Unauthorized
  *       403:
@@ -107,6 +121,8 @@
  *     responses:
  *       200:
  *         description: Job updated
+ *       400:
+ *         description: Validation error
  *       403:
  *         description: Forbidden
  */
@@ -174,11 +190,38 @@ const { authenticateToken, authorizeRoles } = require("../middleware/auth");
 
 const router = express.Router();
 
+function normalizeString(value) {
+  if (value === undefined) return undefined;
+  if (value === null) return null;
+
+  const trimmed = String(value).trim();
+  return trimmed === "" ? null : trimmed;
+}
+
+function hasAtLeastOneContact({
+  contactWhatsapp,
+  contactPhone,
+  contactEmail,
+  contactUrl,
+}) {
+  return Boolean(contactWhatsapp || contactPhone || contactEmail || contactUrl);
+}
+
+function validateEmail(email) {
+  if (!email) return true;
+  return email.includes("@");
+}
+
+function validateUrl(url) {
+  if (!url) return true;
+  return url.startsWith("http://") || url.startsWith("https://");
+}
+
 /**
  * POST /api/v1/jobs
  * - Sadece EMPLOYER ilan oluşturabilir
- * - title, description, universityId zorunlu
- * - en az 1 iletişim yöntemi zorunlu (whatsapp/phone/email/url)
+ * - title, description, universityId, contactPerson zorunlu
+ * - en az 1 iletişim yöntemi zorunlu
  */
 router.post(
   "/",
@@ -190,6 +233,10 @@ router.post(
         title,
         description,
         universityId,
+        salary,
+        workSchedule,
+        address,
+        contactPerson,
         contactWhatsapp,
         contactPhone,
         contactEmail,
@@ -197,45 +244,95 @@ router.post(
         contactNote,
       } = req.body;
 
-      if (!title || !description || !universityId) {
+      if (!title || !description || !universityId || !contactPerson) {
         return res.status(400).json({
-          message: "Missing required fields: title, description, universityId",
+          message:
+            "Missing required fields: title, description, universityId, contactPerson",
         });
       }
 
-      if (!contactWhatsapp && !contactPhone && !contactEmail && !contactUrl) {
+      const normalized = {
+        title: String(title).trim(),
+        description: String(description).trim(),
+        salary: normalizeString(salary),
+        workSchedule: normalizeString(workSchedule),
+        address: normalizeString(address),
+        contactPerson: normalizeString(contactPerson),
+        contactWhatsapp: normalizeString(contactWhatsapp),
+        contactPhone: normalizeString(contactPhone),
+        contactEmail: normalizeString(contactEmail),
+        contactUrl: normalizeString(contactUrl),
+        contactNote: normalizeString(contactNote),
+      };
+
+      if (
+        !hasAtLeastOneContact({
+          contactWhatsapp: normalized.contactWhatsapp,
+          contactPhone: normalized.contactPhone,
+          contactEmail: normalized.contactEmail,
+          contactUrl: normalized.contactUrl,
+        })
+      ) {
         return res.status(400).json({
           message:
             "At least one contact method is required: contactWhatsapp/contactPhone/contactEmail/contactUrl",
         });
       }
 
-      const w = contactWhatsapp ? String(contactWhatsapp).trim() : null;
-      const p = contactPhone ? String(contactPhone).trim() : null;
-      const e = contactEmail ? String(contactEmail).trim() : null;
-      const u = contactUrl ? String(contactUrl).trim() : null;
-      const note = contactNote ? String(contactNote).trim() : null;
-
-      // Basit validasyon (MVP)
-      if (e && !e.includes("@")) {
+      if (!validateEmail(normalized.contactEmail)) {
         return res.status(400).json({ message: "Invalid email" });
       }
-      if (u && !(u.startsWith("http://") || u.startsWith("https://"))) {
+
+      if (!validateUrl(normalized.contactUrl)) {
         return res
           .status(400)
           .json({ message: "Invalid url (must start with http/https)" });
       }
 
+      const uniCheck = await pool.query(
+        "SELECT id FROM universities WHERE id = $1",
+        [universityId]
+      );
+
+      if (!uniCheck.rowCount) {
+        return res.status(400).json({ message: "Invalid universityId" });
+      }
+
       const result = await pool.query(
         `
         INSERT INTO jobs (
-          title, description, university_id, employer_id,
-          contact_whatsapp, contact_phone, contact_email, contact_url, contact_note
+          title,
+          description,
+          university_id,
+          employer_id,
+          salary,
+          work_schedule,
+          address,
+          contact_person,
+          contact_whatsapp,
+          contact_phone,
+          contact_email,
+          contact_url,
+          contact_note
         )
-        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
         RETURNING *
         `,
-        [title, description, universityId, req.user.id, w, p, e, u, note]
+        [
+          normalized.title,
+          normalized.description,
+          universityId,
+          req.user.id,
+          normalized.salary,
+          normalized.workSchedule,
+          normalized.address,
+          normalized.contactPerson,
+          normalized.contactWhatsapp,
+          normalized.contactPhone,
+          normalized.contactEmail,
+          normalized.contactUrl,
+          normalized.contactNote,
+        ]
       );
 
       res.status(201).json(result.rows[0]);
@@ -248,8 +345,7 @@ router.post(
 /**
  * GET /api/v1/jobs?universityId=3
  * - Public liste
- * - MVP: universityId zorunlu (ürün mantığına uygun)
- * - sadece active ilanlar döner
+ * - sadece active ilanlar
  */
 router.get("/", async (req, res, next) => {
   try {
@@ -265,9 +361,11 @@ router.get("/", async (req, res, next) => {
       `
       SELECT
         j.*,
-        u.display_name AS university_name
+        u.display_name AS university_name,
+        usr.email AS employer_email
       FROM jobs j
       LEFT JOIN universities u ON u.id = j.university_id
+      LEFT JOIN users usr ON usr.id = j.employer_id
       WHERE j.university_id = $1
         AND j.is_active = true
       ORDER BY j.created_at DESC
@@ -281,10 +379,56 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-/**
- * GET /api/v1/jobs/employer/mine
- * - EMPLOYER kendi ilanlarını listeler (aktif + pasif)
- */
+
+router.get(
+  "/employer/dashboard",
+  authenticateToken,
+  authorizeRoles("EMPLOYER"),
+  async (req, res, next) => {
+    try {
+      const summaryResult = await pool.query(
+        `
+        SELECT
+          COUNT(*) AS total_jobs,
+          COUNT(*) FILTER (WHERE is_active = true) AS active_jobs,
+          COUNT(*) FILTER (WHERE is_active = false) AS passive_jobs
+        FROM jobs
+        WHERE employer_id = $1
+        `,
+        [req.user.id]
+      );
+
+      const recentJobsResult = await pool.query(
+        `
+        SELECT
+          j.id,
+          j.title,
+          j.is_active,
+          j.created_at,
+          u.display_name AS university_name
+        FROM jobs j
+        LEFT JOIN universities u ON u.id = j.university_id
+        WHERE j.employer_id = $1
+        ORDER BY j.created_at DESC
+        LIMIT 5
+        `,
+        [req.user.id]
+      );
+
+      res.json({
+        summary: summaryResult.rows[0],
+        recentJobs: recentJobsResult.rows,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+
+
+
+
 router.get(
   "/employer/mine",
   authenticateToken,
@@ -313,7 +457,6 @@ router.get(
 
 /**
  * PATCH /api/v1/jobs/:id/deactivate
- * - EMPLOYER sadece kendi ilanını pasife çeker
  */
 router.patch(
   "/:id/deactivate",
@@ -328,11 +471,12 @@ router.patch(
         [id]
       );
 
-      if (check.rows.length === 0) {
+      if (!check.rows.length) {
         return res.status(404).json({ message: "Job not found" });
       }
 
       const job = check.rows[0];
+
       if (job.employer_id !== req.user.id) {
         return res.status(403).json({ message: "You do not own this job" });
       }
@@ -360,7 +504,6 @@ router.patch(
 
 /**
  * PATCH /api/v1/jobs/:id/activate
- * - EMPLOYER sadece kendi ilanını tekrar aktive eder
  */
 router.patch(
   "/:id/activate",
@@ -375,11 +518,12 @@ router.patch(
         [id]
       );
 
-      if (check.rows.length === 0) {
+      if (!check.rows.length) {
         return res.status(404).json({ message: "Job not found" });
       }
 
       const job = check.rows[0];
+
       if (job.employer_id !== req.user.id) {
         return res.status(403).json({ message: "You do not own this job" });
       }
@@ -408,7 +552,6 @@ router.patch(
 /**
  * PATCH /api/v1/jobs/:id
  * - EMPLOYER sadece kendi ilanını günceller
- * - (MVP) alanlar opsiyonel, gelenleri update eder
  */
 router.patch(
   "/:id",
@@ -418,14 +561,15 @@ router.patch(
     try {
       const { id } = req.params;
 
-      // ownership kontrolü
       const check = await pool.query(
         `SELECT id, employer_id FROM jobs WHERE id = $1`,
         [id]
       );
-      if (check.rows.length === 0) {
+
+      if (!check.rows.length) {
         return res.status(404).json({ message: "Job not found" });
       }
+
       if (check.rows[0].employer_id !== req.user.id) {
         return res.status(403).json({ message: "You do not own this job" });
       }
@@ -434,6 +578,10 @@ router.patch(
         title,
         description,
         universityId,
+        salary,
+        workSchedule,
+        address,
+        contactPerson,
         contactWhatsapp,
         contactPhone,
         contactEmail,
@@ -445,6 +593,10 @@ router.patch(
         title !== undefined ||
         description !== undefined ||
         universityId !== undefined ||
+        salary !== undefined ||
+        workSchedule !== undefined ||
+        address !== undefined ||
+        contactPerson !== undefined ||
         contactWhatsapp !== undefined ||
         contactPhone !== undefined ||
         contactEmail !== undefined ||
@@ -455,53 +607,55 @@ router.patch(
         return res.status(400).json({ message: "No fields provided to update" });
       }
 
-      // undefined => alan gelmedi, null => sıfırla, string => set et
-      const w =
-        contactWhatsapp !== undefined
-          ? contactWhatsapp
-            ? String(contactWhatsapp).trim()
-            : null
-          : undefined;
+      const normalized = {
+        title: title !== undefined ? normalizeString(title) : undefined,
+        description:
+          description !== undefined ? normalizeString(description) : undefined,
+        salary: salary !== undefined ? normalizeString(salary) : undefined,
+        workSchedule:
+          workSchedule !== undefined ? normalizeString(workSchedule) : undefined,
+        address: address !== undefined ? normalizeString(address) : undefined,
+        contactPerson:
+          contactPerson !== undefined ? normalizeString(contactPerson) : undefined,
+        contactWhatsapp:
+          contactWhatsapp !== undefined
+            ? normalizeString(contactWhatsapp)
+            : undefined,
+        contactPhone:
+          contactPhone !== undefined ? normalizeString(contactPhone) : undefined,
+        contactEmail:
+          contactEmail !== undefined ? normalizeString(contactEmail) : undefined,
+        contactUrl:
+          contactUrl !== undefined ? normalizeString(contactUrl) : undefined,
+        contactNote:
+          contactNote !== undefined ? normalizeString(contactNote) : undefined,
+      };
 
-      const p =
-        contactPhone !== undefined
-          ? contactPhone
-            ? String(contactPhone).trim()
-            : null
-          : undefined;
-
-      const e =
-        contactEmail !== undefined
-          ? contactEmail
-            ? String(contactEmail).trim()
-            : null
-          : undefined;
-
-      const u =
-        contactUrl !== undefined
-          ? contactUrl
-            ? String(contactUrl).trim()
-            : null
-          : undefined;
-
-      const note =
-        contactNote !== undefined
-          ? contactNote
-            ? String(contactNote).trim()
-            : null
-          : undefined;
-
-      if (e !== undefined && e !== null && !e.includes("@")) {
+      if (
+        normalized.contactEmail !== undefined &&
+        !validateEmail(normalized.contactEmail)
+      ) {
         return res.status(400).json({ message: "Invalid email" });
       }
+
       if (
-        u !== undefined &&
-        u !== null &&
-        !(u.startsWith("http://") || u.startsWith("https://"))
+        normalized.contactUrl !== undefined &&
+        !validateUrl(normalized.contactUrl)
       ) {
         return res
           .status(400)
           .json({ message: "Invalid url (must start with http/https)" });
+      }
+
+      if (universityId !== undefined) {
+        const uniCheck = await pool.query(
+          "SELECT id FROM universities WHERE id = $1",
+          [universityId]
+        );
+
+        if (!uniCheck.rowCount) {
+          return res.status(400).json({ message: "Invalid universityId" });
+        }
       }
 
       const result = await pool.query(
@@ -511,23 +665,35 @@ router.patch(
           title = COALESCE($1, title),
           description = COALESCE($2, description),
           university_id = COALESCE($3, university_id),
-          contact_whatsapp = COALESCE($4, contact_whatsapp),
-          contact_phone = COALESCE($5, contact_phone),
-          contact_email = COALESCE($6, contact_email),
-          contact_url = COALESCE($7, contact_url),
-          contact_note = COALESCE($8, contact_note)
-        WHERE id = $9
+          salary = COALESCE($4, salary),
+          work_schedule = COALESCE($5, work_schedule),
+          address = COALESCE($6, address),
+          contact_person = COALESCE($7, contact_person),
+          contact_whatsapp = COALESCE($8, contact_whatsapp),
+          contact_phone = COALESCE($9, contact_phone),
+          contact_email = COALESCE($10, contact_email),
+          contact_url = COALESCE($11, contact_url),
+          contact_note = COALESCE($12, contact_note)
+        WHERE id = $13
         RETURNING *
         `,
         [
-          title === undefined ? null : title,
-          description === undefined ? null : description,
+          normalized.title === undefined ? null : normalized.title,
+          normalized.description === undefined ? null : normalized.description,
           universityId === undefined ? null : universityId,
-          w === undefined ? null : w,
-          p === undefined ? null : p,
-          e === undefined ? null : e,
-          u === undefined ? null : u,
-          note === undefined ? null : note,
+          normalized.salary === undefined ? null : normalized.salary,
+          normalized.workSchedule === undefined ? null : normalized.workSchedule,
+          normalized.address === undefined ? null : normalized.address,
+          normalized.contactPerson === undefined
+            ? null
+            : normalized.contactPerson,
+          normalized.contactWhatsapp === undefined
+            ? null
+            : normalized.contactWhatsapp,
+          normalized.contactPhone === undefined ? null : normalized.contactPhone,
+          normalized.contactEmail === undefined ? null : normalized.contactEmail,
+          normalized.contactUrl === undefined ? null : normalized.contactUrl,
+          normalized.contactNote === undefined ? null : normalized.contactNote,
           id,
         ]
       );
@@ -542,7 +708,6 @@ router.patch(
 /**
  * GET /api/v1/jobs/:id
  * - Public tek ilan detayı
- * - (istersen burada is_active true kontrolü ekleyebiliriz)
  */
 router.get("/:id", async (req, res, next) => {
   try {
@@ -552,15 +717,17 @@ router.get("/:id", async (req, res, next) => {
       `
       SELECT
         j.*,
-        u.display_name AS university_name
+        u.display_name AS university_name,
+        usr.email AS employer_email
       FROM jobs j
       LEFT JOIN universities u ON u.id = j.university_id
+      LEFT JOIN users usr ON usr.id = j.employer_id
       WHERE j.id = $1
       `,
       [id]
     );
 
-    if (result.rows.length === 0) {
+    if (!result.rows.length) {
       return res.status(404).json({ message: "Job not found" });
     }
 

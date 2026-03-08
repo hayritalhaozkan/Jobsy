@@ -29,7 +29,7 @@ function Login() {
       localStorage.setItem("token", data.accessToken);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      navigate("/feed");
+      navigate("/");
     } catch (err) {
       console.error(err);
       alert("Giriş başarısız.");
@@ -62,24 +62,21 @@ function Login() {
             </h1>
 
             <p style={styles.subtitle}>
-              Üniversitene yakın iş ilanlarını görüntüle, detayları incele ve
-              hızlıca doğru fırsata ulaş.
+              Hesabına giriş yaparak sana uygun akışla devam et.
             </p>
 
             <div style={styles.infoCards}>
               <div style={styles.infoCard}>
-                <div style={styles.infoCardTitle}>Hızlı erişim</div>
+                <div style={styles.infoCardTitle}>Öğrenci akışı</div>
                 <div style={styles.infoCardText}>
-                  Giriş yaptıktan sonra doğrudan ilan akışına geç ve üniversite
-                  bazlı fırsatları görüntüle.
+                  İlanları görüntüle ve üniversitene göre fırsatları keşfet.
                 </div>
               </div>
 
               <div style={styles.infoCard}>
-                <div style={styles.infoCardTitle}>Tek noktadan yönetim</div>
+                <div style={styles.infoCardTitle}>İşveren akışı</div>
                 <div style={styles.infoCardText}>
-                  Öğrenciysen fırsatları keşfet, işverensen kendi ilan akışını
-                  yönet.
+                  Panelini aç, ilanlarını yönet ve yeni ilan oluştur.
                 </div>
               </div>
             </div>

@@ -1,9 +1,7 @@
-// migrations/run.js
 require("dotenv").config();
 const { pool } = require("../src/config/db");
 
 async function migrate() {
-
   const sql = `
   CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
@@ -13,6 +11,9 @@ async function migrate() {
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   );
 
+  ALTER TABLE users
+  ADD COLUMN IF NOT EXISTS university_id INTEGER REFERENCES universities(id) ON DELETE SET NULL;
+
   CREATE TABLE IF NOT EXISTS refresh_tokens (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -21,7 +22,6 @@ async function migrate() {
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   );
 
-  -- Universities
   CREATE TABLE IF NOT EXISTS universities (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -30,29 +30,7 @@ async function migrate() {
     lng DOUBLE PRECISION,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   );
-  --Jobs
-  CREATE TABLE IF NOT EXISTS jobs (
-  id SERIAL PRIMARY KEY,
-  title VARCHAR(255) NOT NULL,
-  description TEXT NOT NULL,
-  university_id INTEGER REFERENCES universities(id) ON DELETE SET NULL,
-  employer_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  is_active BOOLEAN NOT NULL DEFAULT true,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
 
-CREATE INDEX IF NOT EXISTS idx_jobs_university_id ON jobs(university_id);
-CREATE INDEX IF NOT EXISTS idx_jobs_created_at ON jobs(created_at);
-
-ALTER TABLE jobs ADD COLUMN IF NOT EXISTS contact_whatsapp VARCHAR(50);
-ALTER TABLE jobs ADD COLUMN IF NOT EXISTS contact_phone VARCHAR(50);
-ALTER TABLE jobs ADD COLUMN IF NOT EXISTS contact_email VARCHAR(255);
-ALTER TABLE jobs ADD COLUMN IF NOT EXISTS contact_url TEXT;
-ALTER TABLE jobs ADD COLUMN IF NOT EXISTS contact_note VARCHAR(255);
-ALTER TABLE users
-ADD COLUMN IF NOT EXISTS university_id INTEGER REFERENCES universities(id) ON DELETE SET NULL;
-
-  -- Import sirasinda duplicate engellemek için:
   DO $$
   BEGIN
     IF NOT EXISTS (
@@ -64,17 +42,40 @@ ADD COLUMN IF NOT EXISTS university_id INTEGER REFERENCES universities(id) ON DE
       ADD CONSTRAINT universities_name_unique UNIQUE (name);
     END IF;
   END $$;
+
+  CREATE TABLE IF NOT EXISTS jobs (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    university_id INTEGER REFERENCES universities(id) ON DELETE SET NULL,
+    employer_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  );
+
+  ALTER TABLE jobs ADD COLUMN IF NOT EXISTS salary VARCHAR(100);
+  ALTER TABLE jobs ADD COLUMN IF NOT EXISTS work_schedule VARCHAR(255);
+  ALTER TABLE jobs ADD COLUMN IF NOT EXISTS address TEXT;
+  ALTER TABLE jobs ADD COLUMN IF NOT EXISTS contact_person VARCHAR(255);
+  ALTER TABLE jobs ADD COLUMN IF NOT EXISTS contact_whatsapp VARCHAR(50);
+  ALTER TABLE jobs ADD COLUMN IF NOT EXISTS contact_phone VARCHAR(50);
+  ALTER TABLE jobs ADD COLUMN IF NOT EXISTS contact_email VARCHAR(255);
+  ALTER TABLE jobs ADD COLUMN IF NOT EXISTS contact_url TEXT;
+  ALTER TABLE jobs ADD COLUMN IF NOT EXISTS contact_note TEXT;
+
+  CREATE INDEX IF NOT EXISTS idx_jobs_university_id ON jobs(university_id);
+  CREATE INDEX IF NOT EXISTS idx_jobs_created_at ON jobs(created_at);
   `;
 
   await pool.query(sql);
-  console.log(" Migrations applied");
-
-  
+  console.log("Migrations applied");
   await pool.end();
 }
 
 migrate().catch(async (err) => {
   console.error("Migration failed:", err);
-  try { await pool.end(); } catch {}
+  try {
+    await pool.end();
+  } catch {}
   process.exit(1);
 });

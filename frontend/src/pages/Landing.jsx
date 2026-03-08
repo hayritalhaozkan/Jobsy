@@ -1,17 +1,26 @@
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
 function Landing() {
   const navigate = useNavigate();
 
-  return (
-    <div style={styles.page}>
-      <Navbar />
+  const user = useMemo(() => {
+    try {
+      const raw = localStorage.getItem("user");
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  }, []);
 
-      <section style={styles.heroSection}>
-        <div style={styles.heroGlowOne} />
-        <div style={styles.heroGlowTwo} />
+  const isAuthenticated = Boolean(user);
+  const isStudent = user?.role === "STUDENT";
+  const isEmployer = user?.role === "EMPLOYER";
 
+  function renderGuestContent() {
+    return (
+      <>
         <div style={styles.heroContent}>
           <div style={styles.badge}>Yeni nesil kampüs iş deneyimi</div>
 
@@ -66,88 +75,215 @@ function Landing() {
             </div>
           </div>
         </div>
-      </section>
 
-      <section style={styles.roleSection}>
-        <div style={styles.sectionHeader}>
-          <div style={styles.sectionEyebrow}>Sana uygun başlangıç</div>
-          <h2 style={styles.sectionTitle}>Platformu nasıl kullanmak istiyorsun?</h2>
-          <p style={styles.sectionText}>
-            İster öğrenci olarak sana yakın fırsatları keşfet, ister işveren
-            olarak hedeflediğin üniversite kitlesine ulaş.
-          </p>
-        </div>
+        <section style={styles.roleSection}>
+          <div style={styles.sectionHeader}>
+            <div style={styles.sectionEyebrow}>Sana uygun başlangıç</div>
+            <h2 style={styles.sectionTitle}>
+              Platformu nasıl kullanmak istiyorsun?
+            </h2>
+            <p style={styles.sectionText}>
+              İster öğrenci olarak sana yakın fırsatları keşfet, ister işveren
+              olarak hedeflediğin üniversite kitlesine ulaş.
+            </p>
+          </div>
 
-        <div style={styles.roleGrid}>
-          <div
-            style={styles.roleCard}
-            onClick={() => navigate("/register?role=STUDENT")}
-          >
+          <div style={styles.roleGrid}>
+            <div
+              style={styles.roleCard}
+              onClick={() => navigate("/register?role=STUDENT")}
+            >
+              <div style={styles.roleIconWrap}>
+                <span className="material-symbols-rounded" style={styles.roleIcon}>
+                  school
+                </span>
+              </div>
+
+              <h3 style={styles.roleTitle}>Öğrenciyim</h3>
+              <p style={styles.roleText}>
+                Üniversitene yakın yarı zamanlı iş ilanlarını keşfet, detayları
+                incele ve hızlıca iletişime geç.
+              </p>
+              <div style={styles.roleLink}>Öğrenci hesabı oluştur →</div>
+            </div>
+
+            <div
+              style={styles.roleCard}
+              onClick={() => navigate("/register?role=EMPLOYER")}
+            >
+              <div style={styles.roleIconWrap}>
+                <span className="material-symbols-rounded" style={styles.roleIcon}>
+                  apartment
+                </span>
+              </div>
+
+              <h3 style={styles.roleTitle}>İşverenim</h3>
+              <p style={styles.roleText}>
+                İlan oluştur, doğru üniversite kitlesine ulaş ve kampüs
+                çevresindeki adaylarla doğrudan iletişim kur.
+              </p>
+              <div style={styles.roleLink}>İşveren hesabı oluştur →</div>
+            </div>
+          </div>
+        </section>
+
+        <section style={styles.featureSection}>
+          <div style={styles.sectionHeader}>
+            <div style={styles.sectionEyebrow}>Neden Jobsy?</div>
+            <h2 style={styles.sectionTitle}>Kampüs odaklı, sade ve etkili</h2>
+          </div>
+
+          <div style={styles.featureGrid}>
+            <div style={styles.featureCard}>
+              <div style={styles.featureTitle}>Üniversite bazlı deneyim</div>
+              <div style={styles.featureText}>
+                Kullanıcılar doğrudan kendi üniversite çevresine uygun ilanlara
+                odaklanır.
+              </div>
+            </div>
+
+            <div style={styles.featureCard}>
+              <div style={styles.featureTitle}>Hızlı iletişim akışı</div>
+              <div style={styles.featureText}>
+                Başvuru süreçlerini uzatmadan, işverenle doğrudan temas
+                kurulabilir.
+              </div>
+            </div>
+
+            <div style={styles.featureCard}>
+              <div style={styles.featureTitle}>Temiz arayüz</div>
+              <div style={styles.featureText}>
+                Gereksiz karmaşa olmadan, kullanıcıyı asıl aksiyona götüren sade
+                bir ürün akışı sunar.
+              </div>
+            </div>
+          </div>
+        </section>
+      </>
+    );
+  }
+
+  function renderStudentContent() {
+    return (
+      <div style={styles.heroContent}>
+        <div style={styles.badge}>Hoş geldin</div>
+
+        <h1 style={styles.title}>Kampüs iş platformu</h1>
+
+        <p style={styles.subtitle}>
+          Üniversite çevrendeki fırsatları keşfet, detayları incele ve sana en
+          uygun ilanlara daha hızlı ulaş.
+        </p>
+
+        <div style={styles.roleGridCentered}>
+          <div style={styles.roleCard} onClick={() => navigate("/feed")}>
             <div style={styles.roleIconWrap}>
               <span className="material-symbols-rounded" style={styles.roleIcon}>
-                school
+                search
               </span>
             </div>
 
-            <h3 style={styles.roleTitle}>Öğrenciyim</h3>
+            <h3 style={styles.roleTitle}>İş İlanlarını Gör</h3>
             <p style={styles.roleText}>
-              Üniversitene yakın yarı zamanlı iş ilanlarını keşfet, detayları
-              incele ve hızlıca iletişime geç.
+              Kampüs çevrendeki fırsatları keşfet ve detayları incele.
             </p>
-            <div style={styles.roleLink}>Öğrenci hesabı oluştur →</div>
+          </div>
+
+          <div style={styles.roleCard} onClick={() => navigate("/feed")}>
+            <div style={styles.roleIconWrap}>
+              <span className="material-symbols-rounded" style={styles.roleIcon}>
+                filter_alt
+              </span>
+            </div>
+
+            <h3 style={styles.roleTitle}>Üniversitene Göre Keşfet</h3>
+            <p style={styles.roleText}>
+              Üniversitene uygun ilanları filtreleyerek daha hızlı ulaş.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  function renderEmployerContent() {
+    return (
+      <div style={styles.heroContent}>
+        <div style={styles.badge}>Tekrar hoş geldin</div>
+
+        <h1 style={styles.title}>İşveren kontrol merkezi</h1>
+
+        <p style={styles.subtitle}>
+          İlanlarını yönet, panelini görüntüle ve yeni ilan oluşturarak doğru
+          üniversite kitlesine ulaş.
+        </p>
+
+        <div style={styles.roleGridThree}>
+          <div
+            style={styles.roleCard}
+            onClick={() => navigate("/employer/dashboard")}
+          >
+            <div style={styles.roleIconWrap}>
+              <span className="material-symbols-rounded" style={styles.roleIcon}>
+                dashboard
+              </span>
+            </div>
+
+            <h3 style={styles.roleTitle}>Panel</h3>
+            <p style={styles.roleText}>
+              Genel durumu, aktif ve pasif ilan sayılarını görüntüle.
+            </p>
           </div>
 
           <div
             style={styles.roleCard}
-            onClick={() => navigate("/register?role=EMPLOYER")}
+            onClick={() => navigate("/employer/jobs")}
           >
             <div style={styles.roleIconWrap}>
               <span className="material-symbols-rounded" style={styles.roleIcon}>
-                apartment
+                work
               </span>
             </div>
 
-            <h3 style={styles.roleTitle}>İşverenim</h3>
+            <h3 style={styles.roleTitle}>İlanlarım</h3>
             <p style={styles.roleText}>
-              İlan oluştur, doğru üniversite kitlesine ulaş ve kampüs
-              çevresindeki adaylarla doğrudan iletişim kur.
+              Mevcut ilanlarını listele, düzenle ve yönet.
             </p>
-            <div style={styles.roleLink}>İşveren hesabı oluştur →</div>
+          </div>
+
+          <div
+            style={styles.roleCard}
+            onClick={() => navigate("/employer/jobs/new")}
+          >
+            <div style={styles.roleIconWrap}>
+              <span className="material-symbols-rounded" style={styles.roleIcon}>
+                add_circle
+              </span>
+            </div>
+
+            <h3 style={styles.roleTitle}>Yeni İlan Oluştur</h3>
+            <p style={styles.roleText}>
+              Hızlıca yeni bir ilan yayınlayarak adaylara ulaş.
+            </p>
           </div>
         </div>
-      </section>
+      </div>
+    );
+  }
 
-      <section style={styles.featureSection}>
-        <div style={styles.sectionHeader}>
-          <div style={styles.sectionEyebrow}>Neden Jobsy?</div>
-          <h2 style={styles.sectionTitle}>Kampüs odaklı, sade ve etkili</h2>
-        </div>
+  return (
+    <div style={styles.page}>
+      <div style={styles.backgroundLayer}>
+        <div style={styles.heroGlowOne} />
+        <div style={styles.heroGlowTwo} />
+      </div>
 
-        <div style={styles.featureGrid}>
-          <div style={styles.featureCard}>
-            <div style={styles.featureTitle}>Üniversite bazlı deneyim</div>
-            <div style={styles.featureText}>
-              Kullanıcılar doğrudan kendi üniversite çevresine uygun ilanlara
-              odaklanır.
-            </div>
-          </div>
+      <Navbar />
 
-          <div style={styles.featureCard}>
-            <div style={styles.featureTitle}>Hızlı iletişim akışı</div>
-            <div style={styles.featureText}>
-              Başvuru süreçlerini uzatmadan, işverenle doğrudan temas
-              kurulabilir.
-            </div>
-          </div>
-
-          <div style={styles.featureCard}>
-            <div style={styles.featureTitle}>Temiz arayüz</div>
-            <div style={styles.featureText}>
-              Gereksiz karmaşa olmadan, kullanıcıyı asıl aksiyona götüren sade
-              bir ürün akışı sunar.
-            </div>
-          </div>
-        </div>
+      <section style={styles.heroSection}>
+        {!isAuthenticated && renderGuestContent()}
+        {isAuthenticated && isStudent && renderStudentContent()}
+        {isAuthenticated && isEmployer && renderEmployerContent()}
       </section>
     </div>
   );
@@ -155,43 +291,50 @@ function Landing() {
 
 const styles = {
   page: {
+    position: "relative",
     minHeight: "100vh",
+    paddingTop: "110px",
     background:
       "linear-gradient(180deg, #f8fafc 0%, #eef4ff 35%, #ffffff 100%)",
+    overflow: "hidden",
+  },
+
+  backgroundLayer: {
+    position: "absolute",
+    inset: 0,
+    pointerEvents: "none",
+    zIndex: 0,
   },
 
   heroSection: {
-  position: "relative",
-  overflow: "hidden",
-  padding: "140px 24px 56px",
-},
+    position: "relative",
+    zIndex: 1,
+    padding: "40px 24px 72px",
+  },
 
   heroGlowOne: {
     position: "absolute",
-    width: "420px",
-    height: "420px",
+    width: "520px",
+    height: "520px",
     borderRadius: "999px",
     background: "rgba(99, 102, 241, 0.16)",
-    filter: "blur(70px)",
-    top: "-80px",
-    left: "-80px",
-    pointerEvents: "none",
+    filter: "blur(90px)",
+    top: "-140px",
+    left: "-120px",
   },
 
   heroGlowTwo: {
     position: "absolute",
-    width: "380px",
-    height: "380px",
+    width: "460px",
+    height: "460px",
     borderRadius: "999px",
     background: "rgba(14, 165, 233, 0.14)",
-    filter: "blur(70px)",
-    right: "-60px",
-    top: "40px",
-    pointerEvents: "none",
+    filter: "blur(90px)",
+    right: "-80px",
+    top: "-30px",
   },
 
   heroContent: {
-    position: "relative",
     maxWidth: "1080px",
     margin: "0 auto",
     textAlign: "center",
@@ -336,6 +479,21 @@ const styles = {
     gap: "20px",
   },
 
+  roleGridCentered: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 320px))",
+    justifyContent: "center",
+    gap: "24px",
+    marginTop: "46px",
+  },
+
+  roleGridThree: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+    gap: "20px",
+    marginTop: "46px",
+  },
+
   roleCard: {
     background: "rgba(255,255,255,0.88)",
     border: "1px solid rgba(15, 23, 42, 0.06)",
@@ -352,8 +510,10 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    background: "linear-gradient(135deg, rgba(59,130,246,0.12), rgba(109,40,217,0.12))",
+    background:
+      "linear-gradient(135deg, rgba(59,130,246,0.12), rgba(109,40,217,0.12))",
     marginBottom: "16px",
+    marginInline: "auto",
   },
 
   roleIcon: {

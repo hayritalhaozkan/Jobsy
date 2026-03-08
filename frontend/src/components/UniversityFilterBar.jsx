@@ -1,48 +1,70 @@
-function UniversityFilterBar({ selectedUniversity, onChange }) {
+function UniversityFilterBar({
+  universities,
+  selectedUniversityId,
+  onChange,
+}) {
   return (
     <div style={styles.wrapper}>
       <div>
         <div style={styles.label}>Seçili üniversite</div>
-        <div style={styles.name}>
-          {selectedUniversity
-            ? selectedUniversity.display_name || selectedUniversity.name
-            : "Üniversite seçilmedi"}
-        </div>
+        <div style={styles.name}>İlanları üniversiteye göre filtrele</div>
       </div>
 
-      <button onClick={onChange} style={styles.button}>
-        Değiştir
-      </button>
+      <select
+        value={selectedUniversityId || ""}
+        onChange={(e) => onChange(Number(e.target.value))}
+        style={styles.select}
+      >
+        <option value="">Üniversite seç</option>
+        {universities.map((uni) => (
+          <option key={uni.id} value={uni.id}>
+            {uni.display_name || uni.name}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }
 
 const styles = {
   wrapper: {
-    background: "#fff",
-    borderRadius: "16px",
-    padding: "14px 16px",
-    marginBottom: "16px",
+    background: "rgba(255,255,255,0.82)",
+    border: "1px solid rgba(226,232,240,0.9)",
+    borderRadius: "20px",
+    padding: "16px 18px",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+    gap: "16px",
+    marginBottom: "18px",
+    boxShadow: "0 10px 30px rgba(15, 23, 42, 0.05)",
+    backdropFilter: "blur(12px)",
+    WebkitBackdropFilter: "blur(12px)",
   },
+
   label: {
     fontSize: "12px",
-    color: "#6b7280",
+    color: "#64748b",
     marginBottom: "4px",
-  },
-  name: {
     fontWeight: 600,
+    letterSpacing: "0.04em",
+    textTransform: "uppercase",
   },
-  button: {
-    border: "none",
-    background: "#111827",
-    color: "#fff",
-    borderRadius: "10px",
-    padding: "10px 14px",
-    cursor: "pointer",
+
+  name: {
+    fontWeight: 700,
+    color: "#0f172a",
+  },
+
+  select: {
+    minWidth: "260px",
+    padding: "12px 14px",
+    borderRadius: "14px",
+    border: "1px solid #dbe2ea",
+    background: "#fff",
+    color: "#0f172a",
+    outline: "none",
+    fontWeight: 600,
   },
 };
 
