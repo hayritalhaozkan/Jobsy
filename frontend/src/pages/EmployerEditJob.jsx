@@ -3,10 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { fetchUniversities } from "../api/universities";
 import { fetchJobDetail, updateJob } from "../api/jobs";
+import { useToast } from "../context/ToastContext";
 
 function EmployerEditJob() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { showToast } = useToast();
 
   const [universities, setUniversities] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -55,14 +57,18 @@ function EmployerEditJob() {
         });
       } catch (err) {
         console.error("Edit job load error:", err);
-        alert("İlan verileri alınamadı.");
+
+        showToast({
+          type: "error",
+          title: "İlan verileri alınamadı",
+        });
       } finally {
         setLoading(false);
       }
     }
 
     loadData();
-  }, [id]);
+  }, [id, showToast]);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -81,7 +87,11 @@ function EmployerEditJob() {
       !form.universityId ||
       !form.contactPerson
     ) {
-      alert("Lütfen zorunlu alanları doldur.");
+      showToast({
+        type: "warning",
+        title: "Eksik bilgi",
+        message: "Lütfen zorunlu alanları doldur.",
+      });
       return;
     }
 
@@ -91,7 +101,11 @@ function EmployerEditJob() {
       !form.contactEmail &&
       !form.contactUrl
     ) {
-      alert("En az bir iletişim yöntemi girmen gerekiyor.");
+      showToast({
+        type: "warning",
+        title: "İletişim bilgisi gerekli",
+        message: "En az bir iletişim yöntemi girmen gerekiyor.",
+      });
       return;
     }
 
@@ -113,13 +127,20 @@ function EmployerEditJob() {
         contactNote: form.contactNote,
       });
 
-      alert("İlan başarıyla güncellendi.");
+      showToast({
+        type: "success",
+        title: "İlan güncellendi",
+        message: "Değişiklikler başarıyla kaydedildi.",
+      });
+
       navigate("/employer/jobs");
     } catch (err) {
       console.error("Update job error:", err);
-      alert(
-        err?.response?.data?.message || "İlan güncellenirken bir hata oluştu."
-      );
+
+      showToast({
+        type: "error",
+        title: "İlan güncellenemedi",
+      });
     } finally {
       setSaving(false);
     }
@@ -291,7 +312,11 @@ function EmployerEditJob() {
                   Vazgeç
                 </button>
 
-                <button type="submit" style={styles.primaryButton} disabled={saving}>
+                <button
+                  type="submit"
+                  style={styles.primaryButton}
+                  disabled={saving}
+                >
                   {saving ? "Kaydediliyor..." : "Değişiklikleri Kaydet"}
                 </button>
               </div>

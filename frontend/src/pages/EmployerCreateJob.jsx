@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { fetchUniversities } from "../api/universities";
 import { createJob } from "../api/jobs";
+import { useToast } from "../context/ToastContext";
 
 function EmployerCreateJob() {
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [universities, setUniversities] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -32,11 +34,16 @@ function EmployerCreateJob() {
         setUniversities(data || []);
       } catch (err) {
         console.error("Universities fetch error:", err);
+
+        showToast({
+          type: "error",
+          title: "Üniversiteler yüklenemedi",
+        });
       }
     }
 
     loadUniversities();
-  }, []);
+  }, [showToast]);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -55,7 +62,11 @@ function EmployerCreateJob() {
       !form.universityId ||
       !form.contactPerson
     ) {
-      alert("Lütfen zorunlu alanları doldur.");
+      showToast({
+        type: "warning",
+        title: "Eksik bilgi",
+        message: "Lütfen zorunlu alanları doldur.",
+      });
       return;
     }
 
@@ -65,7 +76,11 @@ function EmployerCreateJob() {
       !form.contactEmail &&
       !form.contactUrl
     ) {
-      alert("En az bir iletişim yöntemi girmen gerekiyor.");
+      showToast({
+        type: "warning",
+        title: "İletişim bilgisi gerekli",
+        message: "En az bir iletişim yöntemi girmen gerekiyor.",
+      });
       return;
     }
 
@@ -87,13 +102,20 @@ function EmployerCreateJob() {
         contactNote: form.contactNote,
       });
 
-      alert("İlan başarıyla oluşturuldu.");
+      showToast({
+        type: "success",
+        title: "İlan oluşturuldu",
+        message: "Yeni ilan başarıyla yayınlandı.",
+      });
+
       navigate("/employer/jobs");
     } catch (err) {
       console.error("Create job error:", err);
-      alert(
-        err?.response?.data?.message || "İlan oluşturulurken bir hata oluştu."
-      );
+
+      showToast({
+        type: "error",
+        title: "İlan oluşturulamadı",
+      });
     } finally {
       setLoading(false);
     }
@@ -262,7 +284,11 @@ function EmployerCreateJob() {
                 Vazgeç
               </button>
 
-              <button type="submit" style={styles.primaryButton} disabled={loading}>
+              <button
+                type="submit"
+                style={styles.primaryButton}
+                disabled={loading}
+              >
                 {loading ? "Oluşturuluyor..." : "İlanı Oluştur"}
               </button>
             </div>

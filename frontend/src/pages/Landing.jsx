@@ -31,7 +31,7 @@ function Landing() {
           </h1>
 
           <p style={styles.subtitle}>
-            Jobsy, öğrencileri kampüs çevresindeki part-time iş fırsatlarıyla
+            Jobsy, öğrencileri kampüs çevresindeki yarı zamanlı iş fırsatlarıyla
             buluşturur; işverenlerin ise doğru üniversite kitlesine kolayca
             ulaşmasını sağlar.
           </p>

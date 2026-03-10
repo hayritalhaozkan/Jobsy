@@ -2,41 +2,58 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../api/auth";
 import Navbar from "../components/Navbar";
+import { useToast } from "../context/ToastContext";
 
 function Login() {
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e) {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!email || !password) {
-      alert("Lütfen e-posta ve şifre gir.");
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      const data = await login({
-        email,
-        password,
-      });
-
-      localStorage.setItem("token", data.accessToken);
-      localStorage.setItem("user", JSON.stringify(data.user));
-
-      navigate("/");
-    } catch (err) {
-      console.error(err);
-      alert("Giriş başarısız.");
-    } finally {
-      setLoading(false);
-    }
+  if (!email || !password) {
+    showToast({
+      type: "warning",
+      title: "Giriş Başarısız",
+      
+    });
+    return;
   }
+
+  try {
+    setLoading(true);
+
+    const data = await login({
+      email,
+      password,
+    });
+
+    localStorage.setItem("token", data.accessToken);
+    localStorage.setItem("user", JSON.stringify(data.user));
+
+    showToast({
+      type: "success",
+      title: "Giriş başarılı",
+      message: "Hesabına başarıyla giriş yaptın.",
+    });
+
+    navigate("/");
+  } catch (err) {
+    console.error(err);
+
+    showToast({
+      type: "error",
+      title: "Giriş başarısız",
+      message: "",
+    });
+  } finally {
+    setLoading(false);
+  }
+}
 
   return (
     <div style={styles.page}>
@@ -54,9 +71,9 @@ function Login() {
             <div style={styles.badge}>Tekrar hoş geldin</div>
 
             <h1 style={styles.title}>
-              Jobsy hesabına giriş yap,
+              Jobsy hesabına giriş
               <br />
-              kampüs çevresindeki
+              yaparak, sana özel
               <br />
               fırsatları keşfet.
             </h1>
@@ -84,7 +101,10 @@ function Login() {
 
           <div style={styles.formCard}>
             <div style={styles.formTopIconWrap}>
-              <span className="material-symbols-rounded" style={styles.formTopIcon}>
+              <span
+                className="material-symbols-rounded"
+                style={styles.formTopIcon}
+              >
                 login
               </span>
             </div>
@@ -112,7 +132,11 @@ function Login() {
                 style={styles.input}
               />
 
-              <button type="submit" style={styles.submitButton} disabled={loading}>
+              <button
+                type="submit"
+                style={styles.submitButton}
+                disabled={loading}
+              >
                 {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
               </button>
             </form>

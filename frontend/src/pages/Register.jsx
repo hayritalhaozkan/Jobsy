@@ -3,10 +3,12 @@ import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { fetchUniversities } from "../api/universities";
 import { register } from "../api/auth";
 import Navbar from "../components/Navbar";
+import { useToast } from "../context/ToastContext";
 
 function Register() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { showToast } = useToast();
 
   const initialRole =
     searchParams.get("role") === "EMPLOYER" ? "EMPLOYER" : "STUDENT";
@@ -25,17 +27,26 @@ function Register() {
         setUniversities(data);
       } catch (err) {
         console.error("Universities fetch error:", err);
+
+        showToast({
+          type: "error",
+          title: "Üniversiteler yüklenemedi",
+        });
       }
     }
 
     loadUniversities();
-  }, []);
+  }, [showToast]);
 
   async function handleSubmit(e) {
     e.preventDefault();
 
     if (!email || !password || !universityId) {
-      alert("Lütfen tüm alanları doldur.");
+      showToast({
+        type: "warning",
+        title: "Eksik bilgi",
+        message: "Lütfen tüm alanları doldur.",
+      });
       return;
     }
 
@@ -49,11 +60,21 @@ function Register() {
         universityId: Number(universityId),
       });
 
-      alert("Kayıt başarılı. Şimdi giriş yapabilirsiniz.");
+      showToast({
+        type: "success",
+        title: "Kayıt başarılı",
+        message: "Şimdi giriş yapabilirsiniz.",
+      });
+
       navigate("/login");
     } catch (err) {
       console.error("Register error:", err);
-      alert("Kayıt başarısız.");
+      console.log(err.response?.data);
+
+      showToast({
+        type: "error",
+        title: "Kayıt başarısız",
+      });
     } finally {
       setLoading(false);
     }
@@ -118,7 +139,10 @@ function Register() {
                   ...(role === "STUDENT" ? styles.activeTab : {}),
                 }}
               >
-                <span className="material-symbols-rounded" style={styles.tabIcon}>
+                <span
+                  className="material-symbols-rounded"
+                  style={styles.tabIcon}
+                >
                   school
                 </span>
                 Öğrenci
@@ -132,7 +156,10 @@ function Register() {
                   ...(role === "EMPLOYER" ? styles.activeTab : {}),
                 }}
               >
-                <span className="material-symbols-rounded" style={styles.tabIcon}>
+                <span
+                  className="material-symbols-rounded"
+                  style={styles.tabIcon}
+                >
                   apartment
                 </span>
                 İşveren
@@ -179,7 +206,11 @@ function Register() {
                 ))}
               </select>
 
-              <button type="submit" style={styles.submitButton} disabled={loading}>
+              <button
+                type="submit"
+                style={styles.submitButton}
+                disabled={loading}
+              >
                 {loading ? "Kaydediliyor..." : "Kayıt Ol"}
               </button>
             </form>
