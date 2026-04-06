@@ -95,7 +95,7 @@ function Landing() {
         <section className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
           <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
             <h2 className="title" style={{ fontSize: 'clamp(28px, 4vw, 40px)', marginBottom: '1rem' }}>Üniversitene Göre İlanlar</h2>
-            <p className="subtitle">Kampüsündeki ilanları keşfet ve hemen başvur.</p>
+            <p className="subtitle">Kampüs çevresindeki ilanları keşfet.</p>
           </div>
 
           <UniversityFilterBar
@@ -120,11 +120,11 @@ function Landing() {
                 ))}
               </div>
             )}
-            
+
             {jobs.length > 10 && (
               <div style={{ marginTop: '2.5rem', textAlign: 'center' }}>
-                <button 
-                  className="btn-primary" 
+                <button
+                  className="btn-primary"
                   onClick={() => navigate('/login')}
                   style={{ padding: '16px 32px', fontSize: '1.2rem', boxShadow: '0 12px 34px rgba(79, 70, 229, 0.3)' }}
                 >

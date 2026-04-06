@@ -94,9 +94,9 @@ const styles = {
   },
 
   container: {
-    maxWidth: "1180px",
+    maxWidth: "1320px",
     margin: "0 auto",
-    padding: "0 24px",
+    padding: "0 16px",
   },
 
   headerBlock: {

@@ -41,8 +41,9 @@ function JobDetail() {
 
       <main style={styles.main}>
         <div style={styles.container}>
-          <button style={styles.backButton} onClick={() => navigate(-1)}>
-            ← İlanlara Dön
+          <button className="back-btn" onClick={() => navigate(-1)}>
+            <span className="material-symbols-rounded" style={{ fontSize: '18px' }}>arrow_back</span>
+            İlanlara Dön
           </button>
 
           {loading ? (
@@ -67,7 +68,7 @@ function JobDetail() {
               </section>
 
               <section style={styles.infoGrid}>
-                <div style={styles.infoCard}>
+                <div className="detail-info-card">
                   <div style={styles.infoLabel}>
                     <span className="material-symbols-rounded">payments</span>
                     ÜCRET
@@ -77,7 +78,7 @@ function JobDetail() {
                   </div>
                 </div>
 
-                <div style={styles.infoCard}>
+                <div className="detail-info-card">
                   <div style={styles.infoLabel}>
                     <span className="material-symbols-rounded">schedule</span>
                     ÇALIŞMA SAATLERİ
@@ -87,7 +88,7 @@ function JobDetail() {
                   </div>
                 </div>
 
-                <div style={styles.infoCard}>
+                <div className="detail-info-card">
                   <div style={styles.infoLabel}>
                     <span className="material-symbols-rounded">
                       location_on
@@ -99,7 +100,7 @@ function JobDetail() {
                   </div>
                 </div>
 
-                <div style={styles.infoCard}>
+                <div className="detail-info-card">
                   <div style={styles.infoLabel}>
                     <span className="material-symbols-rounded">person</span>
                     İLETİŞİM KİŞİSİ
@@ -190,20 +191,20 @@ function JobDetail() {
                       href={whatsappHref}
                       target="_blank"
                       rel="noreferrer"
-                      style={styles.primaryAction}
+                      className="btn-primary"
                     >
                       WhatsApp ile Mesaj Gönder
                     </a>
                   )}
 
                   {phoneHref && (
-                    <a href={phoneHref} style={styles.secondaryAction}>
+                    <a href={phoneHref} className="btn-secondary">
                       Telefonla Ara
                     </a>
                   )}
 
                   {emailHref && (
-                    <a href={emailHref} style={styles.secondaryAction}>
+                    <a href={emailHref} className="btn-secondary">
                       E-posta Gönder
                     </a>
                   )}
@@ -213,7 +214,7 @@ function JobDetail() {
                       href={urlHref}
                       target="_blank"
                       rel="noreferrer"
-                      style={styles.secondaryAction}
+                      className="btn-secondary"
                     >
                       Başvuru Linki
                     </a>
@@ -246,18 +247,9 @@ const styles = {
   },
 
   container: {
-    maxWidth: "900px",
+    maxWidth: "1320px",
     margin: "0 auto",
-    padding: "0 24px",
-  },
-
-  backButton: {
-    border: "none",
-    background: "transparent",
-    color: "#475569",
-    fontWeight: 600,
-    cursor: "pointer",
-    marginBottom: "24px",
+    padding: "0 16px",
   },
 
   stateBox: {
@@ -299,13 +291,6 @@ const styles = {
     gridTemplateColumns: "repeat(2,1fr)",
     gap: "16px",
     marginBottom: "30px",
-  },
-
-  infoCard: {
-    background: "#fff",
-    border: "1px solid #e2e8f0",
-    borderRadius: "18px",
-    padding: "20px",
   },
 
   infoLabel: {
@@ -411,27 +396,6 @@ const styles = {
     gap: "12px",
     flexWrap: "wrap",
     justifyContent: "flex-end",
-  },
-
-  primaryAction: {
-    border: "none",
-    background: "linear-gradient(135deg,#4f46e5,#0ea5e9)",
-    color: "#fff",
-    borderRadius: "16px",
-    padding: "14px 20px",
-    fontWeight: 700,
-    boxShadow: "0 10px 24px rgba(79,70,229,0.22)",
-    textAlign: "center",
-  },
-
-  secondaryAction: {
-    border: "1px solid #dbe2ea",
-    background: "#fff",
-    color: "#0f172a",
-    borderRadius: "16px",
-    padding: "14px 18px",
-    fontWeight: 700,
-    textAlign: "center",
   },
 
   noActionText: {
