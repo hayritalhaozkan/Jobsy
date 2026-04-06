@@ -115,9 +115,21 @@ function Landing() {
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                {jobs.map((job) => (
-                  <JobCard key={job.id} job={job} />
+                {jobs.slice(0, 10).map((job) => (
+                  <JobCard key={job.id} job={job} requireAuth={true} />
                 ))}
+              </div>
+            )}
+            
+            {jobs.length > 10 && (
+              <div style={{ marginTop: '2.5rem', textAlign: 'center' }}>
+                <button 
+                  className="btn-primary" 
+                  onClick={() => navigate('/login')}
+                  style={{ padding: '16px 32px', fontSize: '1.2rem', boxShadow: '0 12px 34px rgba(79, 70, 229, 0.3)' }}
+                >
+                  Tüm İlanları ({(jobs.length)}+) İncelemek İçin Giriş Yap
+                </button>
               </div>
             )}
           </div>

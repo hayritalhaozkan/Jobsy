@@ -125,6 +125,50 @@ select {
   box-shadow: var(--shadow-md);
 }
 
+/* Navbar Buttons */
+.nav-btn-text {
+  border: none;
+  background: transparent;
+  color: #334155;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 10px 16px;
+  border-radius: 12px;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease, color 0.2s ease;
+}
+
+.nav-btn-text:hover {
+  background: rgba(255, 255, 255, 0.65);
+  color: var(--primary);
+  transform: translateY(-2px);
+}
+
+.nav-btn-text.active {
+  background: rgba(255, 255, 255, 0.75);
+  color: var(--primary);
+}
+
+.nav-btn-primary {
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.8);
+  color: #0f172a;
+  border-radius: 16px;
+  padding: 12px 20px;
+  font-weight: 800;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.nav-btn-primary:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+  background: #fff;
+  color: var(--primary);
+}
+
 /* Inputs */
 .input-glass {
   padding: 14px 18px;
@@ -209,8 +253,15 @@ select {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(15px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fade-in {
@@ -232,4 +283,55 @@ select {
   color: var(--primary);
   box-shadow: var(--shadow-sm);
   margin-bottom: 1rem;
+}
+
+/* Animated Gradient Background */
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animated-gradient-bg {
+  background: linear-gradient(
+    -45deg, 
+    #ffffff 0%, 
+    #ffffff 30%, 
+    #f1f5f9 33%,
+    #e0e7ff 35%, 
+    #ede9fe 37%, 
+    #ffffff 40%, 
+    #ffffff 75%, 
+    #ede9fe 78%, 
+    #e0e7ff 80%, 
+    #f1f5f9 82%,
+    #ffffff 85%, 
+    #ffffff 100%
+  );
+  background-size: 400% 400%;
+  animation: gradientBG 24s ease-in-out infinite;
+}
+
+/* Glass Bubble Card (Navbar Tarzı Balon Form) */
+.glass-bubble-card {
+  background: rgba(255, 255, 255, 0.48);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 36px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12), inset 0 2px 0 rgba(255, 255, 255, 0.4);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.glass-bubble-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.15), inset 0 2px 0 rgba(255, 255, 255, 0.5);
 }

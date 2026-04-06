@@ -41,14 +41,14 @@ function Navbar() {
           {!isAuthenticated ? (
             <>
               <button
-                style={styles.textButton}
+                className="nav-btn-text"
                 onClick={() => navigate("/login")}
               >
                 Giriş Yap
               </button>
 
               <button
-                style={styles.primaryButton}
+                className="nav-btn-primary"
                 onClick={() => navigate("/register")}
               >
                 Kayıt Ol
@@ -58,12 +58,7 @@ function Navbar() {
             <>
               {isStudent && (
                 <button
-                  style={{
-                    ...styles.textButton,
-                    ...(location.pathname === "/feed"
-                      ? styles.activeTextButton
-                      : {}),
-                  }}
+                  className={`nav-btn-text ${location.pathname === "/feed" ? "active" : ""}`}
                   onClick={() => navigate("/feed")}
                 >
                   İlanlar
@@ -73,24 +68,14 @@ function Navbar() {
               {isEmployer && (
                 <>
                   <button
-                    style={{
-                      ...styles.textButton,
-                      ...(location.pathname === "/employer/dashboard"
-                        ? styles.activeTextButton
-                        : {}),
-                    }}
+                    className={`nav-btn-text ${location.pathname === "/employer/dashboard" ? "active" : ""}`}
                     onClick={() => navigate("/employer/dashboard")}
                   >
                     Panel
                   </button>
 
                   <button
-                    style={{
-                      ...styles.textButton,
-                      ...(location.pathname === "/employer/jobs"
-                        ? styles.activeTextButton
-                        : {}),
-                    }}
+                    className={`nav-btn-text ${location.pathname === "/employer/jobs" ? "active" : ""}`}
                     onClick={() => navigate("/employer/jobs")}
                   >
                     İlanlarım
@@ -98,7 +83,7 @@ function Navbar() {
                 </>
               )}
 
-              <button style={styles.primaryButton} onClick={handleLogout}>
+              <button className="nav-btn-primary" onClick={handleLogout}>
                 Çıkış Yap
               </button>
             </>
@@ -163,33 +148,6 @@ const styles = {
     display: "flex",
     alignItems: "center",
     gap: "10px",
-  },
-
-  textButton: {
-    border: "none",
-    background: "transparent",
-    color: "#334155",
-    fontWeight: 600,
-    cursor: "pointer",
-    padding: "10px 14px",
-    borderRadius: "12px",
-    transition: "background 0.2s ease",
-  },
-
-  activeTextButton: {
-    background: "rgba(255,255,255,0.55)",
-  },
-
-  primaryButton: {
-    border: "1px solid rgba(255,255,255,0.45)",
-    background: "rgba(255,255,255,0.62)",
-    color: "#0f172a",
-    borderRadius: "16px",
-    padding: "12px 18px",
-    fontWeight: 700,
-    cursor: "pointer",
-    boxShadow: "0 8px 24px rgba(15, 23, 42, 0.08)",
-    transition: "transform 0.2s ease, box-shadow 0.2s ease",
   },
 };
 

@@ -1,13 +1,15 @@
 import { Link } from "react-router-dom";
 
-function JobCard({ job }) {
+function JobCard({ job, requireAuth }) {
   const shortDescription =
     job.description && job.description.length > 140
       ? `${job.description.slice(0, 140)}...`
       : job.description || "Açıklama bulunmuyor.";
 
+  const targetUrl = requireAuth ? "/login" : `/jobs/${job.id}`;
+
   return (
-    <Link to={`/jobs/${job.id}`} style={styles.linkWrap}>
+    <Link to={targetUrl} style={styles.linkWrap}>
       <article style={styles.card}>
         <div style={styles.topRow}>
           <div style={styles.badge}>

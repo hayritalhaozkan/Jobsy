@@ -55,35 +55,16 @@ function Login() {
   }
 
   return (
-    <div style={{ paddingTop: '80px', minHeight: '100vh', position: 'relative' }}>
-      <div style={{ 
-        position: 'fixed', 
-        inset: 0, 
-        backgroundImage: 'url(https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2000&auto=format&fit=crop)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        zIndex: -2 
-      }}></div>
-      <div style={{ 
-        position: 'fixed', 
-        inset: 0, 
-        background: 'rgba(240, 244, 248, 0.85)',
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
-        zIndex: -1 
-      }}></div>
-
+    <div className="animated-gradient-bg" style={{ paddingTop: '80px', minHeight: '100vh', position: 'relative' }}>
       <Navbar />
 
       <main className="container flex-center" style={{ minHeight: 'calc(100vh - 80px)', padding: '2rem' }}>
-        <div className="glass-card animate-fade-in" style={{ 
-          padding: '3rem', 
+        <div className="glass-bubble-card animate-fade-in" style={{ 
+          padding: '3.5rem', 
           width: '100%', 
           maxWidth: '440px', 
           display: 'flex', 
-          flexDirection: 'column', 
-          background: 'rgba(255, 255, 255, 0.9)',
-          boxShadow: 'var(--shadow-lg)'
+          flexDirection: 'column'
         }}>
           <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'linear-gradient(135deg, rgba(79,70,229,0.1), rgba(14,165,233,0.1))', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem', marginInline: 'auto' }}>
             <span className="material-symbols-rounded" style={{ fontSize: '32px', color: 'var(--primary)' }}>login</span>

@@ -17,11 +17,9 @@ function Register() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [universityId, setUniversityId] = useState("");
-  const [department, setDepartment] = useState("");
   
   const [companyName, setCompanyName] = useState("");
   const [contactPerson, setContactPerson] = useState("");
-  const [phone, setPhone] = useState("");
   
   const [universities, setUniversities] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -40,11 +38,11 @@ function Register() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (role === "STUDENT" && (!email || !password || !fullName || !universityId || !department)) {
+    if (role === "STUDENT" && (!email || !password || !fullName || !universityId)) {
       showToast({ type: "warning", title: "Eksik bilgi", message: "Lütfen tüm öğrenci alanlarını doldur." });
       return;
     }
-    if (role === "EMPLOYER" && (!email || !password || !companyName || !contactPerson || !phone)) {
+    if (role === "EMPLOYER" && (!email || !password || !companyName || !contactPerson)) {
       showToast({ type: "warning", title: "Eksik bilgi", message: "Lütfen tüm işveren alanlarını doldur." });
       return;
     }
@@ -53,8 +51,8 @@ function Register() {
       setLoading(true);
       
       const payload = role === "STUDENT" 
-        ? { email, password, role, fullName, universityId: Number(universityId), department }
-        : { email, password, role, companyName, contactPerson, phone };
+        ? { email, password, role, fullName, universityId: Number(universityId) }
+        : { email, password, role, companyName, contactPerson };
 
       await register(payload);
       showToast({ type: "success", title: "Kayıt başarılı", message: "Şimdi giriş yapabilirsiniz." });
@@ -67,33 +65,14 @@ function Register() {
   }
 
   return (
-    <div style={{ paddingTop: '80px', minHeight: '100vh', position: 'relative' }}>
-      <div style={{ 
-        position: 'fixed', 
-        inset: 0, 
-        backgroundImage: 'url(https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2000&auto=format&fit=crop)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        zIndex: -2 
-      }}></div>
-      <div style={{ 
-        position: 'fixed', 
-        inset: 0, 
-        background: 'rgba(240, 244, 248, 0.85)',
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
-        zIndex: -1 
-      }}></div>
-
+    <div className="animated-gradient-bg" style={{ paddingTop: '80px', minHeight: '100vh', position: 'relative' }}>
       <Navbar />
 
       <main className="container flex-center" style={{ minHeight: 'calc(100vh - 80px)', padding: '2rem' }}>
-        <div className="glass-card animate-fade-in" style={{ 
-          padding: '3rem', 
+        <div className="glass-bubble-card animate-fade-in" style={{ 
+          padding: '3.5rem', 
           width: '100%', 
-          maxWidth: '440px', 
-          background: 'rgba(255, 255, 255, 0.9)',
-          boxShadow: 'var(--shadow-lg)'
+          maxWidth: '460px'
         }}>
           <div style={{ display: 'flex', gap: '10px', marginBottom: '2rem' }}>
             <button
@@ -171,10 +150,6 @@ function Register() {
                     ))}
                   </select>
                 </div>
-                <div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
-                  <label style={{fontSize: '14px', fontWeight: 'bold', color: 'var(--text-main)', marginLeft: '4px'}}>Bölüm *</label>
-                  <input type="text" placeholder="Bilgisayar Mühendisliği" value={department} onChange={(e) => setDepartment(e.target.value)} className="input-glass" />
-                </div>
               </>
             )}
 
@@ -195,10 +170,6 @@ function Register() {
                 <div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
                   <label style={{fontSize: '14px', fontWeight: 'bold', color: 'var(--text-main)', marginLeft: '4px'}}>Yetkili Adı *</label>
                   <input type="text" placeholder="İletişim kişisi" value={contactPerson} onChange={(e) => setContactPerson(e.target.value)} className="input-glass" />
-                </div>
-                <div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
-                  <label style={{fontSize: '14px', fontWeight: 'bold', color: 'var(--text-main)', marginLeft: '4px'}}>Telefon *</label>
-                  <input type="tel" placeholder="0555 123 4567" value={phone} onChange={(e) => setPhone(e.target.value)} className="input-glass" />
                 </div>
               </>
             )}
