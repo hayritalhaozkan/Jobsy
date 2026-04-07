@@ -4,12 +4,14 @@ import { fetchUniversities } from "../api/universities";
 import Navbar from "../components/Navbar";
 import JobCard from "../components/JobCard";
 import UniversityFilterBar from "../components/UniversityFilterBar";
+import JobDetailModal from "../components/JobDetailModal";
 
 function Feed() {
   const [jobs, setJobs] = useState([]);
   const [universities, setUniversities] = useState([]);
   const [selectedUniversityId, setSelectedUniversityId] = useState(3);
   const [loading, setLoading] = useState(true);
+  const [selectedJobIdForModal, setSelectedJobIdForModal] = useState(null);
 
   useEffect(() => {
     async function loadUniversities() {
@@ -71,9 +73,16 @@ function Feed() {
           ) : (
             <div style={styles.grid}>
               {jobs.map((job) => (
-                <JobCard key={job.id} job={job} />
+                <JobCard key={job.id} job={job} onClick={(id) => setSelectedJobIdForModal(id)} />
               ))}
             </div>
+          )}
+
+          {selectedJobIdForModal && (
+            <JobDetailModal 
+              jobId={selectedJobIdForModal} 
+              onClose={() => setSelectedJobIdForModal(null)} 
+            />
           )}
         </div>
       </main>

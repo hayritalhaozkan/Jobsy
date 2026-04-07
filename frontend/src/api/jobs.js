@@ -93,3 +93,41 @@ export async function activateJob(id) {
     }
   );
 }
+
+/* ogrenci - kaydedilen is ilanlari */
+export async function fetchSavedJobs() {
+  const token = localStorage.getItem("token");
+  const res = await client.get("/jobs/student/saved", {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return res.data.data;
+}
+
+export async function checkJobSaved(id) {
+  const token = localStorage.getItem("token");
+  if (!token) return { isSaved: false }; // Guest user check
+  try {
+    const res = await client.get(`/jobs/${id}/check-save`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return res.data;
+  } catch (err) {
+    return { isSaved: false };
+  }
+}
+
+export async function saveJob(id) {
+  const token = localStorage.getItem("token");
+  const res = await client.post(`/jobs/${id}/save`, {}, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return res.data;
+}
+
+export async function unsaveJob(id) {
+  const token = localStorage.getItem("token");
+  const res = await client.delete(`/jobs/${id}/save`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return res.data;
+}

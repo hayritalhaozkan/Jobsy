@@ -152,10 +152,10 @@ function Landing() {
             <h3 style={{ fontSize: '1.3rem', fontWeight: '700', marginBottom: '0.5rem' }}>İş İlanlarını Gör</h3>
             <p className="subtitle" style={{ fontSize: '1rem' }}>Kampüs çevrendeki fırsatları keşfet ve detayları incele.</p>
           </div>
-          <div onClick={() => navigate('/feed')} className="glass-card" style={{ padding: '2.5rem', cursor: 'pointer' }}>
-            <span className="material-symbols-rounded text-gradient" style={{ fontSize: '48px', marginBottom: '1rem' }}>filter_alt</span>
-            <h3 style={{ fontSize: '1.3rem', fontWeight: '700', marginBottom: '0.5rem' }}>Üniversitene Göre Keşfet</h3>
-            <p className="subtitle" style={{ fontSize: '1rem' }}>Sadece kendi üniversitene uygun ilanları filtrele.</p>
+          <div onClick={() => navigate('/saved-jobs')} className="glass-card" style={{ padding: '2.5rem', cursor: 'pointer' }}>
+            <span className="material-symbols-rounded text-gradient" style={{ fontSize: '48px', marginBottom: '1rem' }}>bookmark</span>
+            <h3 style={{ fontSize: '1.3rem', fontWeight: '700', marginBottom: '0.5rem' }}>Kaydedilen İlanları Gör</h3>
+            <p className="subtitle" style={{ fontSize: '1rem' }}>İlgini çeken ve kaydettiğin tüm ilanlara hızlıca ulaş.</p>
           </div>
         </div>
       </div>

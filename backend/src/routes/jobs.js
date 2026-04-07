@@ -456,6 +456,99 @@ router.get(
 );
 
 /**
+ * GET /api/v1/jobs/student/saved
+ * - Get saved jobs for STUDENT
+ */
+router.get(
+  "/student/saved",
+  authenticateToken,
+  authorizeRoles("STUDENT"),
+  async (req, res, next) => {
+    try {
+      const result = await pool.query(
+        `SELECT j.*, u.display_name AS university_name, 
+        (SELECT true) as is_saved
+        FROM saved_jobs sj
+        JOIN jobs j ON j.id = sj.job_id
+        LEFT JOIN universities u ON u.id = j.university_id
+        WHERE sj.user_id = $1
+        ORDER BY sj.created_at DESC`,
+        [req.user.id]
+      );
+      res.json({ data: result.rows });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
+ * POST /api/v1/jobs/:id/save
+ */
+router.post(
+  "/:id/save",
+  authenticateToken,
+  authorizeRoles("STUDENT"),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const jobCheck = await pool.query("SELECT id FROM jobs WHERE id = $1", [id]);
+      if (!jobCheck.rowCount) return res.status(404).json({ message: "Job not found" });
+
+      await pool.query(
+        `INSERT INTO saved_jobs (user_id, job_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
+        [req.user.id, id]
+      );
+      res.json({ ok: true, message: "Job saved" });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
+ * DELETE /api/v1/jobs/:id/save
+ */
+router.delete(
+  "/:id/save",
+  authenticateToken,
+  authorizeRoles("STUDENT"),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      await pool.query(
+        `DELETE FROM saved_jobs WHERE user_id = $1 AND job_id = $2`,
+        [req.user.id, id]
+      );
+      res.json({ ok: true, message: "Job unsaved" });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
+ * GET /api/v1/jobs/:id/check-save
+ */
+router.get(
+  "/:id/check-save",
+  authenticateToken,
+  authorizeRoles("STUDENT"),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const check = await pool.query(
+        "SELECT 1 FROM saved_jobs WHERE user_id = $1 AND job_id = $2",
+        [req.user.id, id]
+      );
+      res.json({ isSaved: check.rowCount > 0 });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
  * PATCH /api/v1/jobs/:id/deactivate
  */
 router.patch(

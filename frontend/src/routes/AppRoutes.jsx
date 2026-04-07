@@ -4,6 +4,7 @@ import Landing from "../pages/Landing";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Feed from "../pages/Feed";
+import SavedJobs from "../pages/SavedJobs";
 import JobDetail from "../pages/JobDetail";
 import EmployerDashboard from "../pages/EmployerDashboard";
 import EmployerJobs from "../pages/EmployerJobs";
@@ -19,6 +20,7 @@ function AppRoutes() {
         <Route path="/login" element={<Login />} />
 
         <Route path="/feed" element={<Feed />} />
+        <Route path="/saved-jobs" element={<SavedJobs />} />
         <Route path="/jobs/:id" element={<JobDetail />} />
 
         <Route path="/employer/dashboard" element={<EmployerDashboard />} />

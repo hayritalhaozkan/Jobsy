@@ -1,15 +1,24 @@
 import { Link } from "react-router-dom";
 
-function JobCard({ job, requireAuth }) {
+function JobCard({ job, requireAuth, onClick }) {
   const shortDescription =
     job.description && job.description.length > 140
       ? `${job.description.slice(0, 140)}...`
       : job.description || "Açıklama bulunmuyor.";
 
-  const targetUrl = requireAuth ? "/login" : `/jobs/${job.id}`;
+  const handleClick = (e) => {
+    e.preventDefault();
+    if (onClick) {
+       onClick(job.id);
+    } else {
+       // fallback if no onClick is provided
+       if (requireAuth) window.location.href = "/login";
+       else window.location.href = `/jobs/${job.id}`;
+    }
+  };
 
   return (
-    <Link to={targetUrl} style={styles.linkWrap}>
+    <div onClick={handleClick} style={{...styles.linkWrap, cursor: "pointer"}}>
       <article style={styles.card}>
         <div style={styles.topRow}>
           <div style={styles.badge}>
@@ -64,7 +73,7 @@ function JobCard({ job, requireAuth }) {
           </div>
         </div>
       </article>
-    </Link>
+    </div>
   );
 }
 

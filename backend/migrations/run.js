@@ -65,6 +65,14 @@ async function migrate() {
 
   CREATE INDEX IF NOT EXISTS idx_jobs_university_id ON jobs(university_id);
   CREATE INDEX IF NOT EXISTS idx_jobs_created_at ON jobs(created_at);
+
+  CREATE TABLE IF NOT EXISTS saved_jobs (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    job_id INTEGER NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    UNIQUE(user_id, job_id)
+  );
   `;
 
   await pool.query(sql);

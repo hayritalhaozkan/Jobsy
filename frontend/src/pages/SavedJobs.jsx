@@ -1,0 +1,119 @@
+import { useEffect, useState } from "react";
+import { fetchSavedJobs } from "../api/jobs";
+import Navbar from "../components/Navbar";
+import JobCard from "../components/JobCard";
+import JobDetailModal from "../components/JobDetailModal";
+
+function SavedJobs() {
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedJobIdForModal, setSelectedJobIdForModal] = useState(null);
+
+  useEffect(() => {
+    async function loadJobs() {
+      try {
+        setLoading(true);
+        const jobsData = await fetchSavedJobs();
+        setJobs(jobsData);
+      } catch (err) {
+        console.error("Saved jobs fetch error:", err);
+        setJobs([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadJobs();
+  }, []);
+
+  return (
+    <div style={styles.page}>
+      <Navbar />
+
+      <main style={styles.main}>
+        <div style={styles.container}>
+          <div style={styles.headerBlock}>
+            <h1 style={styles.title}>Kaydedilen İlanlar</h1>
+            <p style={styles.subtitle}>
+              İlgini çektiği için kaydettiğin tüm fırsatlar burada.
+            </p>
+          </div>
+
+          <div style={{ marginTop: '2rem' }}>
+            {loading ? (
+              <div style={styles.stateBox}>İlanlar yükleniyor...</div>
+            ) : jobs.length === 0 ? (
+              <div style={styles.stateBox}>
+                Henüz hiç ilan kaydetmedin. İlanları gezerken "Kaydet" butonuna basarak onları buraya ekleyebilirsin.
+              </div>
+            ) : (
+              <div style={styles.grid}>
+                {jobs.map((job) => (
+                  <JobCard key={job.id} job={job} onClick={(id) => setSelectedJobIdForModal(id)} />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {selectedJobIdForModal && (
+             <JobDetailModal 
+                jobId={selectedJobIdForModal} 
+                onClose={() => setSelectedJobIdForModal(null)} 
+             />
+          )}
+
+        </div>
+      </main>
+    </div>
+  );
+}
+
+const styles = {
+  page: {
+    minHeight: "100vh",
+    background:
+      "linear-gradient(180deg, #f8fafc 0%, #eef4ff 35%, #ffffff 100%)",
+  },
+  main: {
+    paddingTop: "110px",
+    paddingBottom: "60px",
+  },
+  container: {
+    maxWidth: "1320px",
+    margin: "0 auto",
+    padding: "0 16px",
+  },
+  headerBlock: {
+    marginBottom: "18px",
+  },
+  title: {
+    margin: 0,
+    fontSize: "clamp(34px, 5vw, 56px)",
+    lineHeight: 1.04,
+    letterSpacing: "-0.03em",
+    color: "#0f172a",
+  },
+  subtitle: {
+    marginTop: "12px",
+    marginBottom: 0,
+    color: "#64748b",
+    fontSize: "17px",
+    lineHeight: 1.7,
+    maxWidth: "700px",
+  },
+  grid: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px",
+  },
+  stateBox: {
+    background: "rgba(255,255,255,0.82)",
+    border: "1px solid rgba(226,232,240,0.9)",
+    borderRadius: "20px",
+    padding: "24px",
+    color: "#475569",
+    boxShadow: "0 10px 30px rgba(15, 23, 42, 0.05)",
+  },
+};
+
+export default SavedJobs;
