@@ -97,14 +97,14 @@ function EmployerDashboard() {
 
               <section style={styles.quickActions}>
                 <button
-                  style={styles.primaryButton}
+                  className="btn-primary"
                   onClick={() => navigate("/employer/jobs")}
                 >
                   İlanlarımı Gör
                 </button>
 
                 <button
-                  style={styles.secondaryButton}
+                  className="btn-secondary"
                   onClick={() => navigate("/employer/jobs/new")}
                 >
                   Yeni İlan Oluştur
@@ -165,7 +165,7 @@ const styles = {
   },
 
   container: {
-    maxWidth: "1180px",
+    maxWidth: "1320px",
     margin: "0 auto",
     padding: "0 24px",
   },
@@ -286,27 +286,6 @@ const styles = {
   passiveBadge: {
     background: "rgba(148,163,184,0.12)",
     color: "#475569",
-  },
-
-  primaryButton: {
-    border: "none",
-    background: "linear-gradient(135deg,#4f46e5,#0ea5e9)",
-    color: "#fff",
-    borderRadius: "16px",
-    padding: "14px 20px",
-    fontWeight: 700,
-    boxShadow: "0 10px 24px rgba(79,70,229,0.22)",
-    cursor: "pointer",
-  },
-
-  secondaryButton: {
-    border: "1px solid #dbe2ea",
-    background: "#fff",
-    color: "#0f172a",
-    borderRadius: "16px",
-    padding: "14px 20px",
-    fontWeight: 700,
-    cursor: "pointer",
   },
 
   stateBox: {

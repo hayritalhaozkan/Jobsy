@@ -94,7 +94,7 @@ function EmployerJobs() {
               </p>
             </div>
 
-            <button style={styles.primaryButton} onClick={handleCreate}>
+            <button className="btn-primary" onClick={handleCreate}>
               + Yeni İlan
             </button>
           </div>
@@ -111,7 +111,7 @@ function EmployerJobs() {
                 başlayabilirsin.
               </div>
 
-              <button style={styles.primaryButton} onClick={handleCreate}>
+              <button className="btn-primary" onClick={handleCreate}>
                 İlk İlanı Oluştur
               </button>
             </div>
@@ -185,7 +185,7 @@ function EmployerJobs() {
 
                   <div style={styles.actions}>
                     <button
-                      style={styles.secondaryButton}
+                      className="btn-secondary"
                       onClick={() => handleEdit(job.id)}
                     >
                       Düzenle
@@ -193,14 +193,14 @@ function EmployerJobs() {
 
                     {job.is_active ? (
                       <button
-                        style={styles.ghostButton}
+                        className="btn-ghost"
                         onClick={() => handleDeactivate(job.id)}
                       >
                         Pasife Al
                       </button>
                     ) : (
                       <button
-                        style={styles.primaryButtonSmall}
+                        className="btn-primary btn-sm"
                         onClick={() => handleActivate(job.id)}
                       >
                         Aktifleştir
@@ -230,7 +230,7 @@ const styles = {
   },
 
   container: {
-    maxWidth: "1180px",
+    maxWidth: "1320px",
     margin: "0 auto",
     padding: "0 24px",
   },
@@ -348,48 +348,6 @@ const styles = {
     display: "flex",
     gap: "12px",
     flexWrap: "wrap",
-  },
-
-  primaryButton: {
-    border: "none",
-    background: "linear-gradient(135deg,#4f46e5,#0ea5e9)",
-    color: "#fff",
-    borderRadius: "16px",
-    padding: "14px 20px",
-    fontWeight: 700,
-    boxShadow: "0 10px 24px rgba(79,70,229,0.22)",
-    cursor: "pointer",
-  },
-
-  primaryButtonSmall: {
-    border: "none",
-    background: "linear-gradient(135deg,#4f46e5,#0ea5e9)",
-    color: "#fff",
-    borderRadius: "14px",
-    padding: "12px 16px",
-    fontWeight: 700,
-    boxShadow: "0 10px 24px rgba(79,70,229,0.22)",
-    cursor: "pointer",
-  },
-
-  secondaryButton: {
-    border: "1px solid #dbe2ea",
-    background: "#fff",
-    color: "#0f172a",
-    borderRadius: "14px",
-    padding: "12px 16px",
-    fontWeight: 700,
-    cursor: "pointer",
-  },
-
-  ghostButton: {
-    border: "1px solid #e2e8f0",
-    background: "#f8fafc",
-    color: "#334155",
-    borderRadius: "14px",
-    padding: "12px 16px",
-    fontWeight: 700,
-    cursor: "pointer",
   },
 
   stateBox: {

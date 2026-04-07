@@ -278,7 +278,7 @@ function EmployerCreateJob() {
             <div style={styles.actions}>
               <button
                 type="button"
-                style={styles.secondaryButton}
+                className="btn-secondary"
                 onClick={() => navigate("/employer/jobs")}
               >
                 Vazgeç
@@ -286,7 +286,7 @@ function EmployerCreateJob() {
 
               <button
                 type="submit"
-                style={styles.primaryButton}
+                className="btn-primary"
                 disabled={loading}
               >
                 {loading ? "Oluşturuluyor..." : "İlanı Oluştur"}
@@ -312,7 +312,7 @@ const styles = {
   },
 
   container: {
-    maxWidth: "1180px",
+    maxWidth: "1320px",
     margin: "0 auto",
     padding: "0 24px",
   },
@@ -418,27 +418,6 @@ const styles = {
     gap: "12px",
     flexWrap: "wrap",
     marginTop: "24px",
-  },
-
-  primaryButton: {
-    border: "none",
-    background: "linear-gradient(135deg,#4f46e5,#0ea5e9)",
-    color: "#fff",
-    borderRadius: "16px",
-    padding: "14px 20px",
-    fontWeight: 700,
-    boxShadow: "0 10px 24px rgba(79,70,229,0.22)",
-    cursor: "pointer",
-  },
-
-  secondaryButton: {
-    border: "1px solid #dbe2ea",
-    background: "#fff",
-    color: "#0f172a",
-    borderRadius: "16px",
-    padding: "14px 20px",
-    fontWeight: 700,
-    cursor: "pointer",
   },
 };
 
