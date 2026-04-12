@@ -1,9 +1,11 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import jobsyLogo from "../assets/jobsy-logo.png";
+import { useState } from "react";
 
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const token = localStorage.getItem("token");
   const userRaw = localStorage.getItem("user");
@@ -22,71 +24,95 @@ function Navbar() {
   function handleLogout() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    setDropdownOpen(false);
     navigate("/login");
   }
 
   return (
     <div style={styles.outer}>
-      <header style={styles.floatingIsland}>
-        <Link to="/" style={styles.brandWrap}>
-          <img
-            src={jobsyLogo}
-            alt="Jobsy Logo"
-            style={styles.logoImage}
-            draggable="false"
-          />
-        </Link>
+      <header style={styles.header}>
+        <div style={styles.left}>
+          <Link to="/" style={styles.brandWrap}>
+            <img
+              src={jobsyLogo}
+              alt="Jobsy Logo"
+              style={styles.logoImage}
+              draggable="false"
+            />
+          </Link>
 
-        <div style={styles.actions}>
+          <nav style={styles.navLinks}>
+            {isStudent && (
+              <button
+                style={{ ...styles.navLink, ...(location.pathname === "/feed" ? styles.navLinkActive : {}) }}
+                onClick={() => navigate("/feed")}
+              >
+                İş İlanları
+              </button>
+            )}
+
+            {isEmployer && (
+              <>
+                <button
+                  style={{ ...styles.navLink, ...(location.pathname === "/employer/dashboard" ? styles.navLinkActive : {}) }}
+                  onClick={() => navigate("/employer/dashboard")}
+                >
+                  Panel
+                </button>
+                <button
+                  style={{ ...styles.navLink, ...(location.pathname === "/employer/jobs" ? styles.navLinkActive : {}) }}
+                  onClick={() => navigate("/employer/jobs")}
+                >
+                  İlanlarım
+                </button>
+              </>
+            )}
+          </nav>
+        </div>
+
+        <div style={styles.right}>
           {!isAuthenticated ? (
             <>
-              <button
-                className="nav-btn-text"
-                onClick={() => navigate("/login")}
-              >
+            <button className="nav-auth-btn" onClick={() => navigate("/login")}>
                 Giriş Yap
               </button>
-
-              <button
-                className="nav-btn-primary"
-                onClick={() => navigate("/register")}
-              >
+              <button className="nav-auth-btn" onClick={() => navigate("/register")}>
                 Kayıt Ol
               </button>
             </>
           ) : (
-            <>
-              {isStudent && (
-                <button
-                  className={`nav-btn-text ${location.pathname === "/feed" ? "active" : ""}`}
-                  onClick={() => navigate("/feed")}
-                >
-                  İlanlar
-                </button>
-              )}
+            <div style={styles.userSection}>
+              <div style={styles.iconBtn}>
+                <span className="material-symbols-rounded" style={styles.iconText}>notifications</span>
+                <span style={styles.notificationBadge}>3</span>
+              </div>
 
-              {isEmployer && (
-                <>
-                  <button
-                    className={`nav-btn-text ${location.pathname === "/employer/dashboard" ? "active" : ""}`}
-                    onClick={() => navigate("/employer/dashboard")}
-                  >
-                    Panel
-                  </button>
+              <div style={styles.profileWrapper}>
+                <div style={styles.profileBtn} onClick={() => setDropdownOpen(!dropdownOpen)}>
+                  <div style={styles.avatar}>
+                    <span className="material-symbols-rounded" style={styles.avatarIcon}>person</span>
+                  </div>
+                  <span style={styles.userName}>{user.name || user.email || 'Kullanıcı'}</span>
+                  <span className="material-symbols-rounded" style={styles.chevron}>
+                    expand_more
+                  </span>
+                </div>
 
-                  <button
-                    className={`nav-btn-text ${location.pathname === "/employer/jobs" ? "active" : ""}`}
-                    onClick={() => navigate("/employer/jobs")}
-                  >
-                    İlanlarım
-                  </button>
-                </>
-              )}
-
-              <button className="nav-btn-primary" onClick={handleLogout}>
-                Çıkış Yap
-              </button>
-            </>
+                {dropdownOpen && (
+                  <div style={styles.dropdown}>
+                    {isStudent && (
+                      <div style={styles.dropdownItem} onClick={() => { setDropdownOpen(false); navigate("/saved-jobs"); }}>
+                        Kaydedilen İlanlar
+                      </div>
+                    )}
+                    <div style={styles.dropdownSeparator}></div>
+                    <div style={styles.dropdownItem} onClick={handleLogout}>
+                      Çıkış Yap
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           )}
         </div>
       </header>
@@ -97,58 +123,167 @@ function Navbar() {
 const styles = {
   outer: {
     position: "fixed",
-    top: "18px",
+    top: 0,
     left: 0,
     right: 0,
     zIndex: 100,
-    display: "flex",
-    justifyContent: "center",
-    pointerEvents: "none",
+    background: "#ffffff",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
   },
 
-  floatingIsland: {
-    width: "min(1320px, calc(100% - 32px))",
-    height: "72px",
-    padding: "0 24px",
-    borderRadius: "24px",
+  header: {
+    maxWidth: "1320px",
+    margin: "0 auto",
+    height: "70px",
+    padding: "0 8px",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    background: "rgba(255, 255, 255, 0.58)",
-    border: "1px solid rgba(255, 255, 255, 0.55)",
-    backdropFilter: "blur(22px) saturate(160%)",
-    WebkitBackdropFilter: "blur(22px) saturate(160%)",
-    boxShadow:
-      "0 10px 30px rgba(15, 23, 42, 0.10), inset 0 1px 0 rgba(255,255,255,0.35)",
-    pointerEvents: "auto",
+  },
+
+  left: {
+    display: "flex",
+    alignItems: "center",
+    gap: "32px",
   },
 
   brandWrap: {
     display: "flex",
     alignItems: "center",
-    cursor: "pointer",
-    userSelect: "none",
-    WebkitUserSelect: "none",
-    textDecoration: "none",
   },
 
   logoImage: {
     height: "150px",
     width: "auto",
     objectFit: "contain",
-    cursor: "pointer",
-    userSelect: "none",
-    WebkitUserSelect: "none",
-    MozUserSelect: "none",
-    msUserSelect: "none",
-    filter: "drop-shadow(0 6px 18px rgba(0,0,0,0.08))",
   },
 
-  actions: {
+  navLinks: {
     display: "flex",
     alignItems: "center",
-    gap: "10px",
+    gap: "16px",
   },
+
+  navLink: {
+    background: "none",
+    border: "none",
+    color: "#334155",
+    fontWeight: "700",
+    fontSize: "14px",
+    cursor: "pointer",
+    padding: "8px 12px",
+    transition: "color 0.2s",
+    fontFamily: "inherit"
+  },
+
+  navLinkActive: {
+    color: "var(--primary)",
+  },
+
+  right: {
+    display: "flex",
+    alignItems: "center",
+    gap: "16px",
+  },
+
+  userSection: {
+    display: "flex",
+    alignItems: "center",
+    gap: "24px",
+  },
+
+  iconBtn: {
+    position: "relative",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#64748b",
+  },
+
+  iconText: {
+    fontSize: "24px",
+  },
+
+  notificationBadge: {
+    position: "absolute",
+    top: "-5px",
+    right: "-5px",
+    background: "var(--primary)",
+    color: "#fff",
+    fontSize: "10px",
+    fontWeight: "bold",
+    height: "16px",
+    minWidth: "16px",
+    borderRadius: "10px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "0 4px",
+  },
+
+  profileWrapper: {
+    position: "relative",
+  },
+
+  profileBtn: {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    cursor: "pointer",
+  },
+
+  avatar: {
+    width: "36px",
+    height: "36px",
+    borderRadius: "50%",
+    background: "#f1f5f9",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  avatarIcon: {
+    fontSize: "20px",
+    color: "#94a3b8",
+  },
+
+  userName: {
+    fontWeight: "600",
+    fontSize: "14px",
+    color: "#334155",
+  },
+
+  chevron: {
+    fontSize: "18px",
+    color: "#64748b",
+  },
+
+  dropdown: {
+    position: "absolute",
+    top: "calc(100% + 15px)",
+    right: 0,
+    background: "#fff",
+    borderRadius: "12px",
+    boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+    minWidth: "220px",
+    padding: "8px 0",
+    zIndex: 101,
+  },
+
+  dropdownItem: {
+    padding: "12px 20px",
+    fontSize: "14px",
+    color: "#334155",
+    cursor: "pointer",
+    transition: "background 0.2s",
+  },
+
+  dropdownSeparator: {
+    height: "1px",
+    background: "#e2e8f0",
+    margin: "4px 0",
+  }
 };
 
 export default Navbar;

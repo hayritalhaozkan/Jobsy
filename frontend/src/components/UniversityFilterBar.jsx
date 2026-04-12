@@ -28,18 +28,16 @@ function UniversityFilterBar({
 
 const styles = {
   wrapper: {
-    background: "rgba(255,255,255,0.82)",
-    border: "1px solid rgba(226,232,240,0.9)",
-    borderRadius: "20px",
-    padding: "16px 18px",
+    background: "#fff",
+    border: "1px solid #e2e8f0",
+    borderRadius: "16px",
+    padding: "16px 20px",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
     gap: "16px",
     marginBottom: "18px",
-    boxShadow: "0 10px 30px rgba(15, 23, 42, 0.05)",
-    backdropFilter: "blur(12px)",
-    WebkitBackdropFilter: "blur(12px)",
+    boxShadow: "0 4px 12px rgba(15, 23, 42, 0.03)",
   },
 
   label: {
@@ -47,24 +45,25 @@ const styles = {
     color: "#64748b",
     marginBottom: "4px",
     fontWeight: 600,
-    letterSpacing: "0.04em",
     textTransform: "uppercase",
   },
 
   name: {
     fontWeight: 700,
     color: "#0f172a",
+    fontSize: "15px",
   },
 
   select: {
     minWidth: "260px",
     padding: "12px 14px",
-    borderRadius: "14px",
+    borderRadius: "10px",
     border: "1px solid #dbe2ea",
-    background: "#fff",
+    background: "#f8fafc",
     color: "#0f172a",
     outline: "none",
     fontWeight: 600,
+    cursor: "pointer",
   },
 };
 

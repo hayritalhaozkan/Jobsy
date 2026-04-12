@@ -52,17 +52,16 @@ function Feed() {
       <main style={styles.main}>
         <div style={styles.container}>
           <div style={styles.headerBlock}>
-            <h1 style={styles.title}>İlanlar</h1>
-            <p style={styles.subtitle}>
-              Üniversitene göre part-time ve kampüs çevresi fırsatlarını keşfet.
-            </p>
+            <h1 style={styles.title}>Tüm İlanlar</h1>
           </div>
 
-          <UniversityFilterBar
-            universities={universities}
-            selectedUniversityId={selectedUniversityId}
-            onChange={setSelectedUniversityId}
-          />
+          <div style={{ marginBottom: '24px' }}>
+            <UniversityFilterBar
+              universities={universities}
+              selectedUniversityId={selectedUniversityId}
+              onChange={setSelectedUniversityId}
+            />
+          </div>
 
           {loading ? (
             <div style={styles.stateBox}>İlanlar yükleniyor...</div>
@@ -93,55 +92,44 @@ function Feed() {
 const styles = {
   page: {
     minHeight: "100vh",
-    background:
-      "linear-gradient(180deg, #f8fafc 0%, #eef4ff 35%, #ffffff 100%)",
+    background: "#f1f5f9",
   },
 
   main: {
-    paddingTop: "110px",
+    paddingTop: "100px",
     paddingBottom: "60px",
   },
 
   container: {
     maxWidth: "1320px",
     margin: "0 auto",
-    padding: "0 16px",
+    padding: "0 24px",
   },
 
   headerBlock: {
-    marginBottom: "18px",
+    marginBottom: "24px",
   },
 
   title: {
     margin: 0,
-    fontSize: "clamp(34px, 5vw, 56px)",
-    lineHeight: 1.04,
-    letterSpacing: "-0.03em",
-    color: "#0f172a",
-  },
-
-  subtitle: {
-    marginTop: "12px",
-    marginBottom: 0,
-    color: "#64748b",
-    fontSize: "17px",
-    lineHeight: 1.7,
-    maxWidth: "700px",
+    fontSize: "24px",
+    fontWeight: "700",
+    color: "#1e293b",
   },
 
   grid: {
-  display: "flex",
-  flexDirection: "column",
-  gap: "16px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px",
   },
 
   stateBox: {
-    background: "rgba(255,255,255,0.82)",
-    border: "1px solid rgba(226,232,240,0.9)",
-    borderRadius: "20px",
-    padding: "24px",
-    color: "#475569",
-    boxShadow: "0 10px 30px rgba(15, 23, 42, 0.05)",
+    background: "#fff",
+    border: "1px solid #e2e8f0",
+    borderRadius: "12px",
+    padding: "32px",
+    textAlign: "center",
+    color: "#64748b",
   },
 };
 

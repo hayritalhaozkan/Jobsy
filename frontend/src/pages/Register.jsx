@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { fetchUniversities } from "../api/universities";
 import { register } from "../api/auth";
-import Navbar from "../components/Navbar";
 import { useToast } from "../context/ToastContext";
+import Navbar from "../components/Navbar";
 
 function Register() {
   const navigate = useNavigate();
@@ -17,10 +17,8 @@ function Register() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [universityId, setUniversityId] = useState("");
-  
   const [companyName, setCompanyName] = useState("");
   const [contactPerson, setContactPerson] = useState("");
-  
   const [universities, setUniversities] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -29,7 +27,7 @@ function Register() {
       try {
         const data = await fetchUniversities();
         setUniversities(data);
-      } catch (err) {
+      } catch {
         showToast({ type: "error", title: "Üniversiteler yüklenemedi" });
       }
     }
@@ -38,153 +36,274 @@ function Register() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+
     if (role === "STUDENT" && (!email || !password || !fullName || !universityId)) {
-      showToast({ type: "warning", title: "Eksik bilgi", message: "Lütfen tüm öğrenci alanlarını doldur." });
+      showToast({ type: "warning", title: "Eksik bilgi", message: "Lütfen tüm alanları doldur." });
       return;
     }
     if (role === "EMPLOYER" && (!email || !password || !companyName || !contactPerson)) {
-      showToast({ type: "warning", title: "Eksik bilgi", message: "Lütfen tüm işveren alanlarını doldur." });
+      showToast({ type: "warning", title: "Eksik bilgi", message: "Lütfen tüm alanları doldur." });
       return;
     }
 
     try {
       setLoading(true);
-      
-      const payload = role === "STUDENT" 
-        ? { email, password, role, fullName, universityId: Number(universityId) }
-        : { email, password, role, companyName, contactPerson };
+
+      const payload =
+        role === "STUDENT"
+          ? { email, password, role, fullName, universityId: Number(universityId) }
+          : { email, password, role, companyName, contactPerson };
 
       await register(payload);
       showToast({ type: "success", title: "Kayıt başarılı", message: "Şimdi giriş yapabilirsiniz." });
       navigate("/login");
-    } catch (err) {
-      showToast({ type: "error", title: "Kayıt başarısız" });
+    } catch {
+      showToast({ type: "error", title: "Kayıt başarısız", message: "Lütfen bilgilerini kontrol et." });
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="animated-gradient-bg" style={{ paddingTop: '80px', minHeight: '100vh', position: 'relative' }}>
+    <>
       <Navbar />
+      <div className="auth-page">
 
-      <main className="container flex-center" style={{ minHeight: 'calc(100vh - 80px)', padding: '2rem' }}>
-        <div className="glass-bubble-card animate-fade-in" style={{ 
-          padding: '3.5rem', 
-          width: '100%', 
-          maxWidth: '460px'
-        }}>
-          <div style={{ display: 'flex', gap: '10px', marginBottom: '2rem' }}>
+      {/* ══════════════════════════════════════
+          Sol Panel — İllüstrasyon
+      ══════════════════════════════════════ */}
+      <div className="auth-left-panel">
+
+        {/* Halka + üniversite merkezi + balonlar */}
+        <div className="auth-illustration">
+
+          <div className="auth-ring auth-ring-3" />
+          <div className="auth-ring auth-ring-2" />
+          <div className="auth-ring auth-ring-1" />
+
+          {/* Merkez: Üniversite kampüsü */}
+          <div className="auth-center-circle">
+            <span className="material-symbols-rounded">school</span>
+          </div>
+
+          {/* Balon 1 — Sol üst */}
+          <div className="auth-float-card" style={{ top: "14%", left: "2%" }}>
+            <div className="auth-float-icon">
+              <span className="material-symbols-rounded">work_history</span>
+            </div>
+            <div>
+              <div className="auth-float-title">Hızlı Başvuru</div>
+              <div className="auth-float-sub">saniyeler içinde ilan başvurusu</div>
+            </div>
+          </div>
+
+          {/* Balon 2 — Sağ üst */}
+          <div className="auth-float-card" style={{ top: "10%", right: "1%" }}>
+            <div className="auth-float-icon">
+              <span className="material-symbols-rounded">groups</span>
+            </div>
+            <div>
+              <div className="auth-float-title">Binlerce Öğrenci</div>
+              <div className="auth-float-sub">Jobsy topluluğuna katıl</div>
+            </div>
+          </div>
+
+          {/* Balon 3 — Sol alt */}
+          <div className="auth-float-card" style={{ bottom: "14%", left: "2%" }}>
+            <div className="auth-float-icon">
+              <span className="material-symbols-rounded">apartment</span>
+            </div>
+            <div>
+              <div className="auth-float-title">500+ İşveren</div>
+              <div className="auth-float-sub">seni keşfetmek için bekliyor</div>
+            </div>
+          </div>
+
+          {/* Balon 4 — Sağ alt */}
+          <div className="auth-float-card" style={{ bottom: "10%", right: "1%" }}>
+            <div className="auth-float-icon">
+              <span className="material-symbols-rounded">verified</span>
+            </div>
+            <div>
+              <div className="auth-float-title">Güvenilir İlanlar</div>
+              <div className="auth-float-sub">doğrulanmış işveren profilleri</div>
+            </div>
+          </div>
+        </div>
+
+        <p className="auth-tagline">Kariyerine kampüsten başla</p>
+      </div>
+
+      {/* ══════════════════════════════════════
+          Sağ Panel — Form
+      ══════════════════════════════════════ */}
+      <div className="auth-right-panel">
+        <div className="auth-form-container">
+
+          <h1 className="auth-heading">Hesap Oluştur</h1>
+          <p className="auth-subheading">
+            Jobsy'e katıl, kampüs çevresindeki fırsatları keşfet.
+          </p>
+
+          {/* Rol Seçimi */}
+          <div className="auth-role-toggle">
             <button
               type="button"
+              id="role-student"
+              className={`auth-role-btn${role === "STUDENT" ? " active" : ""}`}
               onClick={() => setRole("STUDENT")}
-              style={{
-                flex: 1,
-                border: role === "STUDENT" ? 'none' : '1px solid rgba(15, 23, 42, 0.08)',
-                background: role === "STUDENT" ? 'linear-gradient(135deg, var(--primary), var(--secondary))' : 'rgba(248,250,252,0.5)',
-                color: role === "STUDENT" ? '#fff' : 'var(--text-main)',
-                borderRadius: 'var(--radius-md)',
-                padding: '12px',
-                cursor: 'pointer',
-                fontWeight: '700',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                transition: 'all 0.2s',
-                boxShadow: role === "STUDENT" ? '0 12px 24px rgba(79, 70, 229, 0.22)' : 'none'
-              }}
             >
-              <span className="material-symbols-rounded" style={{ fontSize: '20px' }}>school</span>Öğrenci
+              <span className="material-symbols-rounded">school</span>
+              Öğrenci
             </button>
             <button
               type="button"
+              id="role-employer"
+              className={`auth-role-btn${role === "EMPLOYER" ? " active" : ""}`}
               onClick={() => setRole("EMPLOYER")}
-              style={{
-                flex: 1,
-                border: role === "EMPLOYER" ? 'none' : '1px solid rgba(15, 23, 42, 0.08)',
-                background: role === "EMPLOYER" ? 'linear-gradient(135deg, var(--primary), var(--secondary))' : 'rgba(248,250,252,0.5)',
-                color: role === "EMPLOYER" ? '#fff' : 'var(--text-main)',
-                borderRadius: 'var(--radius-md)',
-                padding: '12px',
-                cursor: 'pointer',
-                fontWeight: '700',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                transition: 'all 0.2s',
-                boxShadow: role === "EMPLOYER" ? '0 12px 24px rgba(79, 70, 229, 0.22)' : 'none'
-              }}
             >
-              <span className="material-symbols-rounded" style={{ fontSize: '20px' }}>apartment</span>İşveren
+              <span className="material-symbols-rounded">apartment</span>
+              İşveren
             </button>
           </div>
 
-          <h2 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '0.5rem', textAlign: 'center' }}>
-            {role === "STUDENT" ? "Öğrenci Hesabı" : "İşveren Hesabı"}
-          </h2>
-          <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', textAlign: 'center' }}>Hemen hesabını oluştur.</p>
+          <form onSubmit={handleSubmit} className="auth-form">
 
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {/* ── Öğrenci Formu ── */}
             {role === "STUDENT" && (
               <>
-                <div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
-                  <label style={{fontSize: '14px', fontWeight: 'bold', color: 'var(--text-main)', marginLeft: '4px'}}>E-posta *</label>
-                  <input type="email" placeholder="ornek@email.com" value={email} onChange={(e) => setEmail(e.target.value)} className="input-glass" />
+                <div className="auth-input-group">
+                  <label className="auth-label" htmlFor="reg-email">E-posta *</label>
+                  <input
+                    id="reg-email"
+                    type="email"
+                    placeholder="E-posta"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="auth-input"
+                    autoComplete="email"
+                  />
                 </div>
-                <div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
-                  <label style={{fontSize: '14px', fontWeight: 'bold', color: 'var(--text-main)', marginLeft: '4px'}}>Şifre *</label>
-                  <input type="password" placeholder="En az 6 karakter" value={password} onChange={(e) => setPassword(e.target.value)} className="input-glass" />
+
+                <div className="auth-input-group">
+                  <label className="auth-label" htmlFor="reg-password">Şifre *</label>
+                  <input
+                    id="reg-password"
+                    type="password"
+                    placeholder="Şifre"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="auth-input"
+                    autoComplete="new-password"
+                  />
                 </div>
-                <div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
-                  <label style={{fontSize: '14px', fontWeight: 'bold', color: 'var(--text-main)', marginLeft: '4px'}}>Ad Soyad *</label>
-                  <input type="text" placeholder="Adınız Soyadınız" value={fullName} onChange={(e) => setFullName(e.target.value)} className="input-glass" />
+
+                <div className="auth-input-group">
+                  <label className="auth-label" htmlFor="reg-fullname">Ad Soyad *</label>
+                  <input
+                    id="reg-fullname"
+                    type="text"
+                    placeholder="Adınız Soyadınız"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="auth-input"
+                    autoComplete="name"
+                  />
                 </div>
-                <div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
-                  <label style={{fontSize: '14px', fontWeight: 'bold', color: 'var(--text-main)', marginLeft: '4px'}}>Üniversite *</label>
-                  <select value={universityId} onChange={(e) => setUniversityId(e.target.value)} className="input-glass" style={{ appearance: 'none', cursor: 'pointer' }}>
+
+                <div className="auth-input-group">
+                  <label className="auth-label" htmlFor="reg-university">Üniversite *</label>
+                  <select
+                    id="reg-university"
+                    value={universityId}
+                    onChange={(e) => setUniversityId(e.target.value)}
+                    className="auth-select"
+                  >
                     <option value="">Üniversite seçin</option>
                     {universities.map((uni) => (
-                      <option key={uni.id} value={uni.id}>{uni.display_name || uni.name}</option>
+                      <option key={uni.id} value={uni.id}>
+                        {uni.display_name || uni.name}
+                      </option>
                     ))}
                   </select>
                 </div>
               </>
             )}
 
+            {/* ── İşveren Formu ── */}
             {role === "EMPLOYER" && (
               <>
-                <div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
-                  <label style={{fontSize: '14px', fontWeight: 'bold', color: 'var(--text-main)', marginLeft: '4px'}}>E-posta *</label>
-                  <input type="email" placeholder="ornek@email.com" value={email} onChange={(e) => setEmail(e.target.value)} className="input-glass" />
+                <div className="auth-input-group">
+                  <label className="auth-label" htmlFor="reg-emp-email">E-posta *</label>
+                  <input
+                    id="reg-emp-email"
+                    type="email"
+                    placeholder="E-posta"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="auth-input"
+                    autoComplete="email"
+                  />
                 </div>
-                <div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
-                  <label style={{fontSize: '14px', fontWeight: 'bold', color: 'var(--text-main)', marginLeft: '4px'}}>Şifre *</label>
-                  <input type="password" placeholder="En az 6 karakter" value={password} onChange={(e) => setPassword(e.target.value)} className="input-glass" />
+
+                <div className="auth-input-group">
+                  <label className="auth-label" htmlFor="reg-emp-password">Şifre *</label>
+                  <input
+                    id="reg-emp-password"
+                    type="password"
+                    placeholder="Şifre"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="auth-input"
+                    autoComplete="new-password"
+                  />
                 </div>
-                <div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
-                  <label style={{fontSize: '14px', fontWeight: 'bold', color: 'var(--text-main)', marginLeft: '4px'}}>İşletme Adı *</label>
-                  <input type="text" placeholder="İşletme adınız" value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="input-glass" />
+
+                <div className="auth-input-group">
+                  <label className="auth-label" htmlFor="reg-company">İşletme Adı *</label>
+                  <input
+                    id="reg-company"
+                    type="text"
+                    placeholder="İşletme adı"
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    className="auth-input"
+                  />
                 </div>
-                <div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
-                  <label style={{fontSize: '14px', fontWeight: 'bold', color: 'var(--text-main)', marginLeft: '4px'}}>Yetkili Adı *</label>
-                  <input type="text" placeholder="İletişim kişisi" value={contactPerson} onChange={(e) => setContactPerson(e.target.value)} className="input-glass" />
+
+                <div className="auth-input-group">
+                  <label className="auth-label" htmlFor="reg-contact">Yetkili Adı *</label>
+                  <input
+                    id="reg-contact"
+                    type="text"
+                    placeholder="İletişim kişisi"
+                    value={contactPerson}
+                    onChange={(e) => setContactPerson(e.target.value)}
+                    className="auth-input"
+                  />
                 </div>
               </>
             )}
 
-            <button type="submit" className="btn-primary" disabled={loading} style={{ marginTop: '1rem', padding: '16px', fontSize: '16px' }}>
+            <button
+              id="register-submit"
+              type="submit"
+              className="auth-submit-btn"
+              disabled={loading}
+            >
               {loading ? "Kaydediliyor..." : "Kayıt Ol"}
             </button>
           </form>
 
-          <p style={{ marginTop: '1.5rem', fontSize: '0.9rem', color: 'var(--text-muted)', textAlign: 'center' }}>
-            Zaten hesabın var mı? <Link to="/login" style={{ color: 'var(--text-main)', fontWeight: '700' }}>Giriş yap</Link>
+          <p className="auth-switch-text">
+            Zaten hesabın var mı?{" "}
+            <Link to="/login" className="auth-switch-link">Giriş yap</Link>
           </p>
         </div>
-      </main>
-    </div>
+      </div>
+
+      </div>
+    </>
   );
 }
 

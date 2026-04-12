@@ -62,76 +62,70 @@ function Landing() {
 
   function renderGuestContent() {
     return (
-      <div className="container" style={{ paddingTop: '2rem', paddingBottom: '4rem', width: '100%' }}>
-        {/* Intro */}
-        <section className="animate-fade-in" style={{ textAlign: 'center', margin: '0 auto 4rem', width: '100%' }}>
+      <div style={{ width: '100%' }}>
+        {/* Hero Section with Image Background */}
+        <section style={{
+          ...styles.heroSection,
+          backgroundImage: `linear-gradient(rgba(33, 29, 51, 0.7), rgba(33, 29, 51, 0.7)), url(${handshakeImg})`,
+        }}>
+          <div style={styles.heroContainer}>
+            <h1 style={styles.heroTitle}>
+              İş İlanlarına Başvur, Kariyerine Yön Ver!
+            </h1>
 
-          <img
-            src={handshakeImg}
-            alt="Handshake"
-            style={{
-              width: '100%',
-              height: '450px',
-              objectFit: 'cover',
-              borderRadius: '24px',
-              marginBottom: '2.5rem',
-              boxShadow: 'var(--shadow-md)'
-            }}
-          />
-
-          <h1 className="title" style={{ marginBottom: '1.5rem' }}>
-            Çevrendeki <span className="text-gradient">Fırsatları Keşfet</span>
-          </h1>
-          <p className="subtitle" style={{ marginBottom: '2.5rem' }}>
-            Öğrenciler için en iyi yarı zamanlı işler, işverenler için en yetenekli adaylar Jobsy'de.
-          </p>
-          <div className="flex-center" style={{ gap: '1rem', flexWrap: 'wrap' }}>
-            <button className="btn-primary" onClick={() => navigate('/register?role=STUDENT')}>Öğrenci Başvurusu</button>
-            <button className="btn-secondary" onClick={() => navigate('/register?role=EMPLOYER')}>İşveren Başvurusu</button>
+            <div style={{ marginTop: '60px' }}>
+              <p style={styles.assistanceTitle}>Sana Nasıl Yardımcı Olabiliriz?</p>
+              <div style={styles.pillGrid}>
+                <div className="pill-card-hover" style={styles.pillCard} onClick={() => navigate('/register?role=STUDENT')}>
+                  <span className="material-symbols-rounded" style={{ fontSize: '24px' }}>school</span>
+                  <span>Öğrenci Başvurusu</span>
+                </div>
+                <div className="pill-card-hover" style={styles.pillCard} onClick={() => navigate('/register?role=EMPLOYER')}>
+                  <span className="material-symbols-rounded" style={{ fontSize: '24px' }}>business_center</span>
+                  <span>İşveren Başvurusu</span>
+                </div>
+                <div className="pill-card-hover" style={styles.pillCard} onClick={() => navigate('/login')}>
+                  <span className="material-symbols-rounded" style={{ fontSize: '24px' }}>login</span>
+                  <span>Giriş Yap</span>
+                </div>
+                <div className="pill-card-hover" style={styles.pillCard} onClick={() => navigate('/feed')}>
+                  <span className="material-symbols-rounded" style={{ fontSize: '24px' }}>feed</span>
+                  <span>İlanlara Göz At</span>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
         {/* Jobs List replacing static universities */}
-        <section className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
-          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            <h2 className="title" style={{ fontSize: 'clamp(28px, 4vw, 40px)', marginBottom: '1rem' }}>Üniversitene Göre İlanlar</h2>
-            <p className="subtitle">Kampüs çevresindeki ilanları keşfet.</p>
-          </div>
+        <section style={styles.jobsSection}>
+          <div style={styles.jobsContainer}>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>İlgini Çekebilecek İş İlanları</h2>
+              <button style={styles.viewAllBtn} onClick={() => navigate('/feed')}>Tümünü İncele &gt;</button>
+            </div>
 
-          <UniversityFilterBar
-            universities={universities}
-            selectedUniversityId={selectedUniversityId}
-            onChange={setSelectedUniversityId}
-          />
+            <UniversityFilterBar
+              universities={universities}
+              selectedUniversityId={selectedUniversityId}
+              onChange={setSelectedUniversityId}
+            />
 
-          <div style={{ marginTop: '2rem' }}>
-            {loadingJobs ? (
-              <div style={{ background: "rgba(255,255,255,0.82)", border: "1px solid rgba(226,232,240,0.9)", borderRadius: "20px", padding: "24px", color: "#475569", boxShadow: "0 10px 30px rgba(15, 23, 42, 0.05)" }}>
-                İlanlar yükleniyor...
-              </div>
-            ) : jobs.length === 0 ? (
-              <div style={{ background: "rgba(255,255,255,0.82)", border: "1px solid rgba(226,232,240,0.9)", borderRadius: "20px", padding: "24px", color: "#475569", boxShadow: "0 10px 30px rgba(15, 23, 42, 0.05)" }}>
-                Bu üniversite için henüz aktif ilan bulunmuyor.
-              </div>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                {jobs.slice(0, 10).map((job) => (
-                  <JobCard key={job.id} job={job} requireAuth={true} />
-                ))}
-              </div>
-            )}
-
-            {jobs.length > 10 && (
-              <div style={{ marginTop: '2.5rem', textAlign: 'center' }}>
-                <button
-                  className="btn-primary"
-                  onClick={() => navigate('/login')}
-                  style={{ padding: '16px 32px', fontSize: '1.2rem', boxShadow: '0 12px 34px rgba(79, 70, 229, 0.3)' }}
-                >
-                  Tüm İlanları ({(jobs.length)}+) İncelemek İçin Giriş Yap
-                </button>
-              </div>
-            )}
+            <div style={{ marginTop: '24px' }}>
+              {loadingJobs ? (
+                <div style={styles.stateBox}>İlanlar yükleniyor...</div>
+              ) : jobs.length === 0 ? (
+                <div style={styles.stateBox}>Bu üniversite için henüz aktif ilan bulunmuyor.</div>
+              ) : (
+                <div style={styles.jobsGridHorizontal}>
+                  {jobs.slice(0, 10).map((job) => (
+                    <div key={job.id} style={styles.cardContainerHorizontal}>
+                      <JobCard job={job} requireAuth={true} />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </section>
       </div>
@@ -140,22 +134,20 @@ function Landing() {
 
   function renderStudentContent() {
     return (
-      <div className="container animate-fade-in" style={{ paddingTop: '5rem', textAlign: 'center', maxWidth: '800px' }}>
-        <div className="badge">Hoş geldin</div>
-        <h1 className="title" style={{ marginBottom: '1.5rem' }}>Öğrenci Paneli</h1>
-        <p className="subtitle" style={{ marginBottom: '3rem' }}>
-          Üniversite çevrendeki fırsatları keşfet, detayları incele ve sana en uygun ilanlara daha hızlı ulaş.
-        </p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
-          <div onClick={() => navigate('/feed')} className="glass-card" style={{ padding: '2.5rem', cursor: 'pointer' }}>
-            <span className="material-symbols-rounded text-gradient" style={{ fontSize: '48px', marginBottom: '1rem' }}>search</span>
-            <h3 style={{ fontSize: '1.3rem', fontWeight: '700', marginBottom: '0.5rem' }}>İş İlanlarını Gör</h3>
-            <p className="subtitle" style={{ fontSize: '1rem' }}>Kampüs çevrendeki fırsatları keşfet ve detayları incele.</p>
+      <div style={styles.jobsSection}>
+        <div style={styles.jobsContainer}>
+          <div style={styles.sectionHeader}>
+            <h2 style={styles.sectionTitle}>Öğrenci Paneli</h2>
           </div>
-          <div onClick={() => navigate('/saved-jobs')} className="glass-card" style={{ padding: '2.5rem', cursor: 'pointer' }}>
-            <span className="material-symbols-rounded text-gradient" style={{ fontSize: '48px', marginBottom: '1rem' }}>bookmark</span>
-            <h3 style={{ fontSize: '1.3rem', fontWeight: '700', marginBottom: '0.5rem' }}>Kaydedilen İlanları Gör</h3>
-            <p className="subtitle" style={{ fontSize: '1rem' }}>İlgini çeken ve kaydettiğin tüm ilanlara hızlıca ulaş.</p>
+          <div style={styles.pillGrid}>
+            <div className="pill-card-hover" style={styles.pillCard} onClick={() => navigate('/feed')}>
+              <span className="material-symbols-rounded" style={{ fontSize: '32px', color: 'var(--primary)' }}>search</span>
+              <span style={{ fontWeight: 'bold' }}>İş İlanlarını Gör</span>
+            </div>
+            <div className="pill-card-hover" style={styles.pillCard} onClick={() => navigate('/saved-jobs')}>
+              <span className="material-symbols-rounded" style={{ fontSize: '32px', color: 'var(--primary)' }}>bookmark</span>
+              <span style={{ fontWeight: 'bold' }}>Kaydedilen İlanlar</span>
+            </div>
           </div>
         </div>
       </div>
@@ -164,27 +156,24 @@ function Landing() {
 
   function renderEmployerContent() {
     return (
-      <div className="container animate-fade-in" style={{ paddingTop: '5rem', textAlign: 'center', maxWidth: '900px' }}>
-        <div className="badge">Tekrar hoş geldin</div>
-        <h1 className="title" style={{ marginBottom: '1.5rem' }}>İşveren Kontrol Merkezi</h1>
-        <p className="subtitle" style={{ marginBottom: '3rem' }}>
-          İlanlarını yönet, panelini görüntüle ve yeni ilan oluşturarak doğru üniversite kitlesine ulaş.
-        </p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem' }}>
-          <div onClick={() => navigate('/employer/dashboard')} className="glass-card" style={{ padding: '2rem', cursor: 'pointer' }}>
-            <span className="material-symbols-rounded text-gradient" style={{ fontSize: '40px', marginBottom: '1rem' }}>dashboard</span>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: '700', marginBottom: '0.5rem' }}>Panel</h3>
-            <p className="subtitle" style={{ fontSize: '0.95rem' }}>Genel durumu, aktif ve pasif ilan sayılarını görüntüle.</p>
+      <div style={styles.jobsSection}>
+        <div style={styles.jobsContainer}>
+          <div style={styles.sectionHeader}>
+            <h2 style={styles.sectionTitle}>İşveren Kontrol Merkezi</h2>
           </div>
-          <div onClick={() => navigate('/employer/jobs')} className="glass-card" style={{ padding: '2rem', cursor: 'pointer' }}>
-            <span className="material-symbols-rounded text-gradient" style={{ fontSize: '40px', marginBottom: '1rem' }}>work</span>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: '700', marginBottom: '0.5rem' }}>İlanlarım</h3>
-            <p className="subtitle" style={{ fontSize: '0.95rem' }}>Mevcut ilanlarını listele, düzenle ve yönet.</p>
-          </div>
-          <div onClick={() => navigate('/employer/jobs/new')} className="glass-card" style={{ padding: '2rem', cursor: 'pointer' }}>
-            <span className="material-symbols-rounded text-gradient" style={{ fontSize: '40px', marginBottom: '1rem' }}>add_circle</span>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: '700', marginBottom: '0.5rem' }}>Yeni İlan Oluştur</h3>
-            <p className="subtitle" style={{ fontSize: '0.95rem' }}>Hızlıca yeni bir ilan yayınlayarak adaylara ulaş.</p>
+          <div style={{ ...styles.pillGrid, gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))' }}>
+            <div className="pill-card-hover" style={styles.pillCard} onClick={() => navigate('/employer/dashboard')}>
+              <span className="material-symbols-rounded" style={{ fontSize: '32px', color: 'var(--primary)' }}>dashboard</span>
+              <span style={{ fontWeight: 'bold' }}>Panel</span>
+            </div>
+            <div className="pill-card-hover" style={styles.pillCard} onClick={() => navigate('/employer/jobs')}>
+              <span className="material-symbols-rounded" style={{ fontSize: '32px', color: 'var(--primary)' }}>work</span>
+              <span style={{ fontWeight: 'bold' }}>İlanlarım</span>
+            </div>
+            <div className="pill-card-hover" style={styles.pillCard} onClick={() => navigate('/employer/jobs/new')}>
+              <span className="material-symbols-rounded" style={{ fontSize: '32px', color: 'var(--primary)' }}>add_circle</span>
+              <span style={{ fontWeight: 'bold' }}>Yeni İlan Oluştur</span>
+            </div>
           </div>
         </div>
       </div>
@@ -192,14 +181,10 @@ function Landing() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', paddingTop: '80px', position: 'relative' }}>
-      <div className="bg-glow bg-glow-1"></div>
-      <div className="bg-glow bg-glow-2"></div>
-      <div className="bg-glow bg-glow-3"></div>
-
+    <div style={{ minHeight: '100vh', position: 'relative' }}>
       <Navbar />
 
-      <main style={{ position: 'relative', zIndex: 1 }}>
+      <main style={{ paddingTop: '70px', minHeight: 'calc(100vh - 70px)', background: '#f1f5f9' }}>
         {!isAuthenticated && renderGuestContent()}
         {isAuthenticated && isStudent && renderStudentContent()}
         {isAuthenticated && isEmployer && renderEmployerContent()}
@@ -207,5 +192,111 @@ function Landing() {
     </div>
   );
 }
+
+const styles = {
+  heroSection: {
+    width: "100%",
+    minHeight: "500px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    position: "relative",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    overflow: "hidden",
+  },
+  heroContainer: {
+    maxWidth: "1320px",
+    margin: "0 auto",
+    padding: "0 24px",
+    width: "100%",
+    zIndex: 2,
+    position: "relative",
+    paddingBottom: "80px",
+    paddingTop: "60px",
+  },
+  heroTitle: {
+    color: "#fff",
+    fontSize: "clamp(36px, 4vw, 48px)",
+    fontWeight: "700",
+    marginBottom: "30px",
+    maxWidth: "800px",
+    lineHeight: 1.2,
+  },
+  assistanceTitle: {
+    color: "#e2e8f0",
+    fontSize: "18px",
+    marginBottom: "20px",
+  },
+  pillGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+    gap: "16px",
+    maxWidth: "1000px",
+  },
+  pillCard: {
+    background: "#fff",
+    borderRadius: "8px",
+    padding: "16px 20px",
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+    cursor: "pointer",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+    transition: "transform 0.2s, box-shadow 0.2s, background 0.2s",
+    color: "#334155",
+    fontWeight: "500",
+  },
+  jobsSection: {
+    width: "100%",
+    padding: "60px 0",
+    background: "#f1f5f9",
+  },
+  jobsContainer: {
+    maxWidth: "1320px",
+    margin: "0 auto",
+    padding: "0 24px",
+  },
+  sectionHeader: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: "24px",
+  },
+  sectionTitle: {
+    fontSize: "24px",
+    color: "#1e293b",
+    margin: 0,
+  },
+  viewAllBtn: {
+    background: "none",
+    border: "none",
+    color: "#3b82f6",
+    fontWeight: "600",
+    cursor: "pointer",
+    fontSize: "14px",
+  },
+  jobsGridHorizontal: {
+    display: "flex",
+    flexDirection: "row",
+    gap: "20px",
+    overflowX: "auto",
+    paddingBottom: "16px",
+    scrollbarWidth: "none", // For Firefox
+    /* Webkit scrollbar hiding can be done in CSS */
+  },
+  cardContainerHorizontal: {
+    minWidth: "350px",
+    flex: "0 0 auto",
+  },
+  stateBox: {
+    background: "#fff",
+    border: "1px solid #e2e8f0",
+    borderRadius: "12px",
+    padding: "32px",
+    textAlign: "center",
+    color: "#64748b",
+  }
+};
 
 export default Landing;

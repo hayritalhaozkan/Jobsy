@@ -1,76 +1,37 @@
 import { Link } from "react-router-dom";
 
 function JobCard({ job, requireAuth, onClick }) {
-  const shortDescription =
-    job.description && job.description.length > 140
-      ? `${job.description.slice(0, 140)}...`
-      : job.description || "Açıklama bulunmuyor.";
-
   const handleClick = (e) => {
     e.preventDefault();
     if (onClick) {
        onClick(job.id);
     } else {
-       // fallback if no onClick is provided
        if (requireAuth) window.location.href = "/login";
        else window.location.href = `/jobs/${job.id}`;
     }
   };
 
   return (
-    <div onClick={handleClick} style={{...styles.linkWrap, cursor: "pointer"}}>
+    <div onClick={handleClick} style={{...styles.cardLink, cursor: "pointer"}}>
       <article style={styles.card}>
-        <div style={styles.topRow}>
-          <div style={styles.badge}>
-            <span className="material-symbols-rounded" style={styles.badgeIcon}>
-              work
-            </span>
-            Aktif İlan
+        <div style={styles.leftSection}>
+          <div style={styles.logoBox}>
+            <span className="material-symbols-rounded" style={styles.placeholderLogo}>business</span>
+          </div>
+          <div style={styles.infoBox}>
+            <h3 style={styles.title}>{job.title}</h3>
+            <div style={styles.companyInfo}>
+              <span style={styles.companyName}>{"Şirket Adı"}</span>
+              {job.address && (
+                <span style={styles.location}>{job.address}</span>
+              )}
+            </div>
           </div>
         </div>
 
-        <h3 style={styles.title}>{job.title}</h3>
-
-        <p style={styles.description}>{shortDescription}</p>
-
-        <div style={styles.metaList}>
-          {job.address && (
-            <div style={styles.metaItem}>
-              <span className="material-symbols-rounded" style={styles.metaIcon}>
-                location_on
-              </span>
-              <span>{job.address}</span>
-            </div>
-          )}
-
-          {job.salary && (
-            <div style={styles.metaItem}>
-              <span className="material-symbols-rounded" style={styles.metaIcon}>
-                payments
-              </span>
-              <span>{job.salary}</span>
-            </div>
-          )}
-
-          {job.work_schedule && (
-            <div style={styles.metaItem}>
-              <span className="material-symbols-rounded" style={styles.metaIcon}>
-                schedule
-              </span>
-              <span>{job.work_schedule}</span>
-            </div>
-          )}
-        </div>
-
-        <div style={styles.bottomRow}>
-          <div style={styles.bottomLabel}>Detayları incele</div>
-
-          <div style={styles.cta}>
-            Görüntüle
-            <span className="material-symbols-rounded" style={styles.ctaIcon}>
-              chevron_right
-            </span>
-          </div>
+        <div style={styles.rightSection}>
+          <button style={styles.applyBtn}>Başvur &gt;</button>
+          <div style={styles.daysLeft}>Son 15 Gün</div>
         </div>
       </article>
     </div>
@@ -78,117 +39,91 @@ function JobCard({ job, requireAuth, onClick }) {
 }
 
 const styles = {
-  linkWrap: {
+  cardLink: {
     textDecoration: "none",
     color: "inherit",
     display: "block",
   },
-
   card: {
-    background: "rgba(255,255,255,0.88)",
-    border: "1px solid rgba(226,232,240,0.95)",
-    borderRadius: "24px",
-    padding: "22px",
-    minHeight: "280px",
+    background: "#fff",
+    border: "1px solid #f1f5f9",
+    borderRadius: "12px",
+    padding: "20px 24px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.02)",
+    transition: "box-shadow 0.2s, transform 0.2s",
+  },
+  leftSection: {
+    display: "flex",
+    alignItems: "center",
+    gap: "24px",
+  },
+  logoBox: {
+    width: "70px",
+    height: "70px",
+    border: "1px solid #e2e8f0",
+    borderRadius: "8px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    background: "#fff",
+  },
+  placeholderLogo: {
+    fontSize: "32px",
+    color: "#cbd5e1",
+  },
+  infoBox: {
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between",
-    boxShadow: "0 14px 34px rgba(15, 23, 42, 0.06)",
-    backdropFilter: "blur(12px)",
-    WebkitBackdropFilter: "blur(12px)",
-    transition:
-      "transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease",
-  },
-
-  topRow: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    gap: "12px",
-    marginBottom: "18px",
-  },
-
-  badge: {
-    display: "inline-flex",
-    alignItems: "center",
     gap: "6px",
-    padding: "8px 12px",
-    borderRadius: "999px",
-    background: "rgba(79,70,229,0.10)",
-    color: "#4338ca",
-    fontSize: "13px",
-    fontWeight: 700,
   },
-
-  badgeIcon: {
-    fontSize: "16px",
-  },
-
   title: {
     margin: 0,
-    fontSize: "24px",
-    lineHeight: 1.15,
-    letterSpacing: "-0.02em",
-    color: "#0f172a",
-    marginBottom: "14px",
-  },
-
-  description: {
-    margin: 0,
-    color: "#475569",
-    lineHeight: 1.75,
-    fontSize: "15px",
-    marginBottom: "18px",
-  },
-
-  metaList: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px",
-    marginBottom: "20px",
-  },
-
-  metaItem: {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    color: "#64748b",
-    fontSize: "14px",
-    lineHeight: 1.5,
-  },
-
-  metaIcon: {
     fontSize: "18px",
-    color: "#6366f1",
+    fontWeight: "700",
+    color: "#1e293b",
   },
-
-  bottomRow: {
+  companyInfo: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "space-between",
     gap: "12px",
-    marginTop: "auto",
-    paddingTop: "18px",
-    borderTop: "1px solid rgba(226,232,240,0.8)",
-  },
-
-  bottomLabel: {
     fontSize: "14px",
     color: "#64748b",
-    fontWeight: 600,
   },
-
-  cta: {
-    display: "inline-flex",
+  companyName: {
+    fontWeight: "500",
+    color: "#475569",
+  },
+  location: {
+    color: "#94a3b8",
+  },
+  rightSection: {
+    display: "flex",
     alignItems: "center",
-    gap: "4px",
-    fontWeight: 700,
-    color: "#0f172a",
+    gap: "16px",
   },
-
-  ctaIcon: {
-    fontSize: "18px",
+  applyBtn: {
+    background: "var(--secondary)",
+    color: "#fff",
+    border: "none",
+    borderRadius: "999px",
+    padding: "10px 24px",
+    fontWeight: "600",
+    fontSize: "14px",
+    cursor: "pointer",
+    transition: "background 0.2s",
   },
+  daysLeft: {
+    border: "1px solid var(--secondary)",
+    color: "var(--secondary)",
+    borderRadius: "999px",
+    padding: "8px 16px",
+    fontSize: "12px",
+    fontWeight: "600",
+    background: "rgba(74, 222, 128, 0.05)",
+  }
 };
 
 export default JobCard;
