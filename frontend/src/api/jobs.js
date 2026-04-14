@@ -6,6 +6,13 @@ export async function fetchJobsByUniversity(universityId) {
   return res.data.data;
 }
 
+/* landing sayfası - rastgele ilanlar (filtre yok) */
+export async function fetchRandomJobs(limit = 6) {
+  const res = await client.get(`/jobs/random?limit=${limit}`);
+  return res.data.data;
+}
+
+
 /* ilan detayı */
 export async function fetchJobDetail(id) {
   const res = await client.get(`/jobs/${id}`);

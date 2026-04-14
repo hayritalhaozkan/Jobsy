@@ -343,6 +343,34 @@ router.post(
 );
 
 /**
+ * GET /api/v1/jobs/random?limit=6
+ * - Public - üniversiteye göre filtresiz rastgele aktif ilanlar
+ */
+router.get("/random", async (req, res, next) => {
+  try {
+    const limit = Math.min(parseInt(req.query.limit) || 6, 20);
+    const result = await pool.query(
+      `
+      SELECT
+        j.*,
+        u.display_name AS university_name,
+        usr.email AS employer_email
+      FROM jobs j
+      LEFT JOIN universities u ON u.id = j.university_id
+      LEFT JOIN users usr ON usr.id = j.employer_id
+      WHERE j.is_active = true
+      ORDER BY RANDOM()
+      LIMIT $1
+      `,
+      [limit]
+    );
+    res.json({ data: result.rows });
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
  * GET /api/v1/jobs?universityId=3
  * - Public liste
  * - sadece active ilanlar
