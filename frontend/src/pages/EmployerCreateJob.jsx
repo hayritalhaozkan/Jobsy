@@ -14,6 +14,7 @@ function EmployerCreateJob() {
 
   const [form, setForm] = useState({
     title: "",
+    companyName: "",
     description: "",
     universityId: "",
     salary: "",
@@ -58,6 +59,7 @@ function EmployerCreateJob() {
 
     if (
       !form.title ||
+      !form.companyName ||
       !form.description ||
       !form.universityId ||
       !form.contactPerson
@@ -100,6 +102,7 @@ function EmployerCreateJob() {
         contactEmail: form.contactEmail,
         contactUrl: form.contactUrl,
         contactNote: form.contactNote,
+        companyName: form.companyName,
       });
 
       showToast({
@@ -136,6 +139,17 @@ function EmployerCreateJob() {
 
           <form onSubmit={handleSubmit} style={styles.formCard}>
             <div style={styles.grid}>
+              <div style={styles.fullWidth}>
+                <label style={styles.label}>İşletme Adı *</label>
+                <input
+                  name="companyName"
+                  value={form.companyName}
+                  onChange={handleChange}
+                  style={styles.input}
+                  placeholder="Örn: Kampüs Kafe"
+                />
+              </div>
+
               <div style={styles.fullWidth}>
                 <label style={styles.label}>İlan Başlığı *</label>
                 <input

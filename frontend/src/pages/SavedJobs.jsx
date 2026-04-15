@@ -41,10 +41,18 @@ function SavedJobs() {
 
           <div style={{ marginTop: '2rem' }}>
             {loading ? (
-              <div style={styles.stateBox}>İlanlar yükleniyor...</div>
+              <div style={styles.stateWrapper}>
+                <span className="material-symbols-rounded" style={{...styles.stateIcon, animation: 'spin 1s linear infinite'}}>refresh</span>
+                <h3 style={styles.stateTitle}>Yükleniyor...</h3>
+                <p style={styles.stateText}>Kaydedilen ilanlar getiriliyor, lütfen bekleyin.</p>
+              </div>
             ) : jobs.length === 0 ? (
-              <div style={styles.stateBox}>
-                Henüz hiç ilan kaydetmedin. İlanları gezerken "Kaydet" butonuna basarak onları buraya ekleyebilirsin.
+              <div style={styles.stateWrapper}>
+                <span className="material-symbols-rounded" style={styles.stateIcon}>bookmark_border</span>
+                <h3 style={styles.stateTitle}>Henüz İlan Kaydetmedin</h3>
+                <p style={styles.stateText}>
+                  İlanları incelerken ilgini çeken fırsatları kaydet butonuna basarak buraya ekleyebilirsin.
+                </p>
               </div>
             ) : (
               <div style={styles.grid}>
@@ -106,13 +114,38 @@ const styles = {
     flexDirection: "column",
     gap: "16px",
   },
-  stateBox: {
-    background: "rgba(255,255,255,0.82)",
-    border: "1px solid rgba(226,232,240,0.9)",
-    borderRadius: "20px",
+  stateWrapper: {
+    background: "rgba(255,255,255,0.8)",
+    border: "2px dashed #cbd5e1",
+    borderRadius: "24px",
+    padding: "100px 24px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+  },
+  stateIcon: {
+    fontSize: "64px",
+    color: "#94a3b8",
+    marginBottom: "24px",
+    background: "#f1f5f9",
     padding: "24px",
-    color: "#475569",
-    boxShadow: "0 10px 30px rgba(15, 23, 42, 0.05)",
+    borderRadius: "50%",
+    boxShadow: "inset 0 2px 4px rgba(0,0,0,0.05)",
+  },
+  stateTitle: {
+    margin: "0 0 12px 0",
+    fontSize: "24px",
+    fontWeight: "700",
+    color: "#334155",
+  },
+  stateText: {
+    margin: 0,
+    fontSize: "16px",
+    color: "#64748b",
+    maxWidth: "400px",
+    lineHeight: "1.6",
   },
 };
 

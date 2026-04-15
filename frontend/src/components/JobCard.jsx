@@ -21,17 +21,34 @@ function JobCard({ job, requireAuth, onClick }) {
           <div style={styles.infoBox}>
             <h3 style={styles.title}>{job.title}</h3>
             <div style={styles.companyInfo}>
-              <span style={styles.companyName}>{"Şirket Adı"}</span>
+              <span style={styles.companyName}>{job.company_name || "Bilinmeyen İşletme"}</span>
+            </div>
+            
+            <div style={styles.infoRow}>
+              {job.salary && (
+                <div style={styles.infoItem}>
+                  <span className="material-symbols-rounded" style={styles.infoIcon}>payments</span>
+                  {job.salary}
+                </div>
+              )}
+              {job.work_schedule && (
+                <div style={styles.infoItem}>
+                  <span className="material-symbols-rounded" style={styles.infoIcon}>schedule</span>
+                  {job.work_schedule}
+                </div>
+              )}
               {job.address && (
-                <span style={styles.location}>{job.address}</span>
+                <div style={styles.infoItem}>
+                  <span className="material-symbols-rounded" style={styles.infoIcon}>location_on</span>
+                  {job.address}
+                </div>
               )}
             </div>
           </div>
         </div>
 
         <div style={styles.rightSection}>
-          <button style={styles.applyBtn}>Başvur &gt;</button>
-          <div style={styles.daysLeft}>Son 15 Gün</div>
+          <button style={styles.applyBtn}>Görüntüle</button>
         </div>
       </article>
     </div>
@@ -99,6 +116,27 @@ const styles = {
   location: {
     color: "#94a3b8",
   },
+  infoRow: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "8px",
+    marginTop: "8px",
+  },
+  infoItem: {
+    display: "flex",
+    alignItems: "center",
+    gap: "4px",
+    color: "#64748b",
+    background: "#f8fafc",
+    border: "1px solid #e2e8f0",
+    borderRadius: "999px",
+    padding: "6px 10px",
+    fontSize: "13px",
+  },
+  infoIcon: {
+    fontSize: "16px",
+    color: "#6366f1",
+  },
   rightSection: {
     display: "flex",
     alignItems: "center",
@@ -114,15 +152,6 @@ const styles = {
     fontSize: "14px",
     cursor: "pointer",
     transition: "background 0.2s",
-  },
-  daysLeft: {
-    border: "1px solid var(--secondary)",
-    color: "var(--secondary)",
-    borderRadius: "999px",
-    padding: "8px 16px",
-    fontSize: "12px",
-    fontWeight: "600",
-    background: "rgba(74, 222, 128, 0.05)",
   }
 };
 

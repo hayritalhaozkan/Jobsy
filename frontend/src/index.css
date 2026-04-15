@@ -942,6 +942,13 @@ select {
 }
 .cta-hover-btn-secondary:hover {
   transform: translateY(-2px);
-  background: rgba(255, 255, 255, 0.15) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Spinner Animasyon */
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
 }

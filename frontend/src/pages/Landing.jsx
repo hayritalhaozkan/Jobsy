@@ -79,7 +79,7 @@ function FeaturedJobCard({ job }) {
           <div style={cs.employerRow}>
             <span className="material-symbols-rounded" style={cs.empIcon}>apartment</span>
             <div>
-              <div style={cs.empLabel}>İşveren</div>
+              <div style={cs.empLabel}>{job.company_name || "Bilinmeyen İşletme"}</div>
               {job.address && (
                 <div style={cs.empSub}>
                   {job.address.slice(0, 28)}{job.address.length > 28 ? "…" : ""}
@@ -421,18 +421,18 @@ function Landing() {
   function renderStudent() {
     return (
       <div style={st.jobsSection}>
-        <div style={st.jobsInner}>
-          <h2 style={st.secTitle}>Öğrenci Paneli</h2>
-          <div style={{ ...st.pillGrid, marginTop: "24px" }}>
-            <div className="pill-card-hover" style={st.pillCard}
-              onClick={() => navigate("/feed")}>
-              <span className="material-symbols-rounded" style={{ fontSize: "28px", color: "#4A6FA5" }}>search</span>
-              <span style={{ fontWeight: "700" }}>İş İlanlarını Gör</span>
+        <div style={{...st.jobsInner, textAlign: 'center'}}>
+          <h2 style={{...st.secTitle, marginBottom: '40px'}}>Öğrenci Paneli</h2>
+          <div style={st.dashboardGrid}>
+            <div className="pill-card-hover" style={st.dashboardCard} onClick={() => navigate("/feed")}>
+              <span className="material-symbols-rounded" style={{ ...st.dashboardIcon, color: "#4A6FA5" }}>search</span>
+              <span>İş İlanlarını Gör</span>
+              <p style={st.dashboardDesc}>Kampüsüne yakın yarı zamanlı fırsatları incele ve uygun olanlara başvur.</p>
             </div>
-            <div className="pill-card-hover" style={st.pillCard}
-              onClick={() => navigate("/saved-jobs")}>
-              <span className="material-symbols-rounded" style={{ fontSize: "28px", color: "#4A6FA5" }}>bookmark</span>
-              <span style={{ fontWeight: "700" }}>Kaydedilen İlanlar</span>
+            <div className="pill-card-hover" style={st.dashboardCard} onClick={() => navigate("/saved-jobs")}>
+              <span className="material-symbols-rounded" style={{ ...st.dashboardIcon, color: "#4A6FA5" }}>bookmark</span>
+              <span>Kaydedilen İlanlar</span>
+              <p style={st.dashboardDesc}>Daha önce kaydettiğin ilanları tek bir ekrandan hızlıca takip et.</p>
             </div>
           </div>
         </div>
@@ -444,23 +444,23 @@ function Landing() {
   function renderEmployer() {
     return (
       <div style={st.jobsSection}>
-        <div style={st.jobsInner}>
-          <h2 style={st.secTitle}>İşveren Kontrol Merkezi</h2>
-          <div style={{ ...st.pillGrid, gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", marginTop: "24px" }}>
-            <div className="pill-card-hover" style={st.pillCard}
-              onClick={() => navigate("/employer/dashboard")}>
-              <span className="material-symbols-rounded" style={{ fontSize: "28px", color: "#4A6FA5" }}>dashboard</span>
-              <span style={{ fontWeight: "700" }}>Panel</span>
+        <div style={{...st.jobsInner, textAlign: 'center'}}>
+          <h2 style={{...st.secTitle, marginBottom: '40px'}}>İşveren Kontrol Merkezi</h2>
+          <div style={st.dashboardGrid}>
+            <div className="pill-card-hover" style={st.dashboardCard} onClick={() => navigate("/employer/dashboard")}>
+              <span className="material-symbols-rounded" style={{ ...st.dashboardIcon, color: "#4A6FA5" }}>dashboard</span>
+              <span>Panel</span>
+              <p style={st.dashboardDesc}>Tüm istatistikleri ve genel başvuruları tek bir ekrandan gözlemle.</p>
             </div>
-            <div className="pill-card-hover" style={st.pillCard}
-              onClick={() => navigate("/employer/jobs")}>
-              <span className="material-symbols-rounded" style={{ fontSize: "28px", color: "#5C7A6E" }}>work</span>
-              <span style={{ fontWeight: "700" }}>İlanlarım</span>
+            <div className="pill-card-hover" style={st.dashboardCard} onClick={() => navigate("/employer/jobs")}>
+              <span className="material-symbols-rounded" style={{ ...st.dashboardIcon, color: "#5C7A6E" }}>work</span>
+              <span>İlanlarım</span>
+              <p style={st.dashboardDesc}>Aktif ve pasif olan şuan bütün iş ilanlarını kolayca listele ve yönet.</p>
             </div>
-            <div className="pill-card-hover" style={st.pillCard}
-              onClick={() => navigate("/employer/jobs/new")}>
-              <span className="material-symbols-rounded" style={{ fontSize: "28px", color: "#6B7280" }}>add_circle</span>
-              <span style={{ fontWeight: "700" }}>Yeni İlan Oluştur</span>
+            <div className="pill-card-hover" style={st.dashboardCard} onClick={() => navigate("/employer/jobs/new")}>
+              <span className="material-symbols-rounded" style={{ ...st.dashboardIcon, color: "#6B7280" }}>add_circle</span>
+              <span>Yeni İlan Oluştur</span>
+              <p style={st.dashboardDesc}>Aradığın yeni yetenekler için hemen detaylı bir ilan formu oluştur ve yayınla.</p>
             </div>
           </div>
         </div>
@@ -603,6 +603,45 @@ const st = {
     color: "#6B7280",
     fontSize: "14px",
   },
+  
+  // ── LOGGED IN DASHBOARD STİLLERİ ──
+  dashboardGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+    gap: '24px',
+    maxWidth: '1000px',
+    margin: '0 auto',
+  },
+  dashboardCard: {
+    background: "rgba(255,255,255,0.95)",
+    borderRadius: "20px",
+    padding: "36px 24px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "12px",
+    cursor: "pointer",
+    boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
+    color: "#1F2937",
+    fontWeight: "800",
+    fontSize: "18px",
+    border: "1px solid rgba(228,231,236,0.8)",
+    textAlign: "center",
+    transition: "transform 0.2s, box-shadow 0.2s",
+  },
+  dashboardDesc: {
+    fontSize: '14px',
+    color: '#6B7280',
+    fontWeight: '500',
+    margin: 0,
+    lineHeight: 1.4,
+  },
+  dashboardIcon: {
+    fontSize: '48px',
+    marginBottom: '8px',
+  },
+
   loginCta: {
     minWidth: "170px",
     maxWidth: "185px",
@@ -763,7 +802,7 @@ const st = {
   ctaBanner: {
     width: '100%',
     padding: '80px 32px',
-    background: 'linear-gradient(145deg, #1E293B 0%, #0F172A 100%)',
+    background: 'linear-gradient(145deg, #efeaff 0%, #e2d8fe 100%)',
     position: 'relative',
     overflow: 'hidden',
   },
@@ -781,11 +820,11 @@ const st = {
     transform: 'translateX(-50%)',
     width: '60%',
     height: '200%',
-    background: 'radial-gradient(circle, rgba(74,111,165,0.20) 0%, rgba(0,0,0,0) 70%)',
+    background: 'radial-gradient(circle, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 70%)',
     pointerEvents: 'none',
   },
   ctaBannerEyebrow: {
-    color: '#93C5FD',
+    color: '#4A6FA5',
     fontSize: '12px',
     fontWeight: '700',
     letterSpacing: '0.08em',
@@ -796,14 +835,14 @@ const st = {
   ctaBannerTitle: {
     fontSize: '36px',
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#111827',
     margin: 0,
     letterSpacing: '-0.02em',
     position: 'relative',
   },
   ctaBannerSub: {
     fontSize: '16px',
-    color: '#94A3B8',
+    color: '#475569',
     marginTop: '12px',
     marginBottom: '32px',
     position: 'relative',
@@ -832,9 +871,9 @@ const st = {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
-    background: 'rgba(255,255,255,0.1)',
-    border: '1px solid rgba(255,255,255,0.3)',
-    color: '#FFFFFF',
+    background: 'rgba(0,0,0,0.05)',
+    border: '1px solid rgba(0,0,0,0.1)',
+    color: '#1F2937',
     padding: '12px 24px',
     borderRadius: '12px',
     fontSize: '15px',

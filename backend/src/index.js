@@ -19,6 +19,10 @@ async function startServer() {
   try {
 
     await pool.query("SELECT 1");
+    try {
+      await pool.query('ALTER TABLE jobs ADD COLUMN company_name VARCHAR(255)');
+      console.log('company_name column added to jobs table');
+    } catch (e) { /* column may already exist */ }
     console.log("DB connected");
   } catch (err) {
     console.error("Failed to start server: Could not connect to DB:", err);

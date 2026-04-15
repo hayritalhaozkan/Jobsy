@@ -16,6 +16,7 @@ function EmployerEditJob() {
 
   const [form, setForm] = useState({
     title: "",
+    companyName: "",
     description: "",
     universityId: "",
     salary: "",
@@ -43,6 +44,7 @@ function EmployerEditJob() {
 
         setForm({
           title: jobData.title || "",
+          companyName: jobData.company_name || "",
           description: jobData.description || "",
           universityId: jobData.university_id || "",
           salary: jobData.salary || "",
@@ -83,6 +85,7 @@ function EmployerEditJob() {
 
     if (
       !form.title ||
+      !form.companyName ||
       !form.description ||
       !form.universityId ||
       !form.contactPerson
@@ -114,6 +117,7 @@ function EmployerEditJob() {
 
       await updateJob(id, {
         title: form.title,
+        companyName: form.companyName,
         description: form.description,
         universityId: Number(form.universityId),
         salary: form.salary,
@@ -164,6 +168,17 @@ function EmployerEditJob() {
           ) : (
             <form onSubmit={handleSubmit} style={styles.formCard}>
               <div style={styles.grid}>
+                <div style={styles.fullWidth}>
+                  <label style={styles.label}>İşletme Adı *</label>
+                  <input
+                    name="companyName"
+                    value={form.companyName}
+                    onChange={handleChange}
+                    style={styles.input}
+                    placeholder="Örn: Kampüs Kafe"
+                  />
+                </div>
+
                 <div style={styles.fullWidth}>
                   <label style={styles.label}>İlan Başlığı *</label>
                   <input

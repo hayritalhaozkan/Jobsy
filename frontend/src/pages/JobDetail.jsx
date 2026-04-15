@@ -56,12 +56,12 @@ function JobDetail() {
                 <h1 style={styles.title}>{job.title}</h1>
 
                 <div style={styles.subInfo}>
-                  {job.employer_name && (
+                  {job.company_name && (
                     <div style={styles.subInfoItem}>
                       <span className="material-symbols-rounded">
                         apartment
                       </span>
-                      {job.employer_name}
+                      {job.company_name}
                     </div>
                   )}
                 </div>

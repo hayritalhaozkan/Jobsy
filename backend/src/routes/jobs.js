@@ -242,12 +242,13 @@ router.post(
         contactEmail,
         contactUrl,
         contactNote,
+        companyName,
       } = req.body;
 
-      if (!title || !description || !universityId || !contactPerson) {
+      if (!title || !companyName || !description || !universityId || !contactPerson) {
         return res.status(400).json({
           message:
-            "Missing required fields: title, description, universityId, contactPerson",
+            "Missing required fields: title, companyName, description, universityId, contactPerson",
         });
       }
 
@@ -263,6 +264,7 @@ router.post(
         contactEmail: normalizeString(contactEmail),
         contactUrl: normalizeString(contactUrl),
         contactNote: normalizeString(contactNote),
+        companyName: normalizeString(companyName),
       };
 
       if (
@@ -313,9 +315,10 @@ router.post(
           contact_phone,
           contact_email,
           contact_url,
-          contact_note
+          contact_note,
+          company_name
         )
-        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
         RETURNING *
         `,
         [
@@ -332,6 +335,7 @@ router.post(
           normalized.contactEmail,
           normalized.contactUrl,
           normalized.contactNote,
+          normalized.companyName,
         ]
       );
 
@@ -671,6 +675,43 @@ router.patch(
 );
 
 /**
+ * DELETE /api/v1/jobs/:id
+ * - EMPLOYER sadece kendi ilanını siler
+ */
+router.delete(
+  "/:id",
+  authenticateToken,
+  authorizeRoles("EMPLOYER"),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+
+      const check = await pool.query(
+        `SELECT id, employer_id FROM jobs WHERE id = $1`,
+        [id]
+      );
+
+      if (!check.rows.length) {
+        return res.status(404).json({ message: "Job not found" });
+      }
+
+      const job = check.rows[0];
+
+      if (job.employer_id !== req.user.id) {
+        return res.status(403).json({ message: "You do not own this job" });
+      }
+
+      await pool.query(`DELETE FROM saved_jobs WHERE job_id = $1`, [id]);
+      await pool.query(`DELETE FROM jobs WHERE id = $1`, [id]);
+
+      res.json({ ok: true, message: "Job deleted" });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
  * PATCH /api/v1/jobs/:id
  * - EMPLOYER sadece kendi ilanını günceller
  */
@@ -708,6 +749,7 @@ router.patch(
         contactEmail,
         contactUrl,
         contactNote,
+        companyName,
       } = req.body;
 
       const hasAny =
@@ -722,7 +764,8 @@ router.patch(
         contactPhone !== undefined ||
         contactEmail !== undefined ||
         contactUrl !== undefined ||
-        contactNote !== undefined;
+        contactNote !== undefined ||
+        companyName !== undefined;
 
       if (!hasAny) {
         return res.status(400).json({ message: "No fields provided to update" });
@@ -750,6 +793,8 @@ router.patch(
           contactUrl !== undefined ? normalizeString(contactUrl) : undefined,
         contactNote:
           contactNote !== undefined ? normalizeString(contactNote) : undefined,
+        companyName:
+          companyName !== undefined ? normalizeString(companyName) : undefined,
       };
 
       if (
@@ -794,8 +839,9 @@ router.patch(
           contact_phone = COALESCE($9, contact_phone),
           contact_email = COALESCE($10, contact_email),
           contact_url = COALESCE($11, contact_url),
-          contact_note = COALESCE($12, contact_note)
-        WHERE id = $13
+          contact_note = COALESCE($12, contact_note),
+          company_name = COALESCE($13, company_name)
+        WHERE id = $14
         RETURNING *
         `,
         [
@@ -815,6 +861,7 @@ router.patch(
           normalized.contactEmail === undefined ? null : normalized.contactEmail,
           normalized.contactUrl === undefined ? null : normalized.contactUrl,
           normalized.contactNote === undefined ? null : normalized.contactNote,
+          normalized.companyName === undefined ? null : normalized.companyName,
           id,
         ]
       );

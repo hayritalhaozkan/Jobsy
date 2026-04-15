@@ -28,7 +28,12 @@ function Login() {
       localStorage.setItem("user", JSON.stringify(data.user));
 
       showToast({ type: "success", title: "Giriş başarılı", message: "Hesabına başarıyla giriş yaptın." });
-      navigate("/");
+
+      if (data.user.role === "EMPLOYER") {
+        navigate("/employer/jobs");
+      } else {
+        navigate("/feed");
+      }
     } catch (err) {
       console.error(err);
       showToast({ type: "error", title: "Giriş başarısız", message: "E-posta veya şifre hatalı." });

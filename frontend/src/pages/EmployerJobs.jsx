@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { fetchEmployerJobs, deactivateJob, activateJob } from "../api/jobs";
+import { fetchEmployerJobs, deactivateJob, activateJob, deleteJob } from "../api/jobs";
 
 function EmployerJobs() {
   const navigate = useNavigate();
@@ -68,6 +68,19 @@ function EmployerJobs() {
     } catch (err) {
       console.error("Activate error:", err);
       alert("İlan aktifleştirilemedi.");
+    }
+  }
+
+  async function handleDelete(id) {
+    const isConfirmed = window.confirm("Bu ilanı tamamen silmek istediğinize emin misiniz? Bu işlem geri alınamaz.");
+    if (!isConfirmed) return;
+
+    try {
+      await deleteJob(id);
+      await loadJobs();
+    } catch (err) {
+      console.error("Delete error:", err);
+      alert("İlan silinemedi.");
     }
   }
 
@@ -184,6 +197,14 @@ function EmployerJobs() {
                   </div>
 
                   <div style={styles.actions}>
+                    <button
+                      className="btn-ghost"
+                      style={{ color: "#ef4444" }}
+                      onClick={() => handleDelete(job.id)}
+                    >
+                      Sil
+                    </button>
+
                     <button
                       className="btn-secondary"
                       onClick={() => handleEdit(job.id)}

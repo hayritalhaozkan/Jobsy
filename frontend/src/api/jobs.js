@@ -101,6 +101,17 @@ export async function activateJob(id) {
   );
 }
 
+/* ilan silme */
+export async function deleteJob(id) {
+  const token = localStorage.getItem("token");
+
+  await client.delete(`/jobs/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
 /* ogrenci - kaydedilen is ilanlari */
 export async function fetchSavedJobs() {
   const token = localStorage.getItem("token");

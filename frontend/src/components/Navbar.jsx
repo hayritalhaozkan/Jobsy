@@ -42,31 +42,8 @@ function Navbar() {
           </Link>
 
           <nav style={styles.navLinks}>
-            {isStudent && (
-              <button
-                style={{ ...styles.navLink, ...(location.pathname === "/feed" ? styles.navLinkActive : {}) }}
-                onClick={() => navigate("/feed")}
-              >
-                İş İlanları
-              </button>
-            )}
-
-            {isEmployer && (
-              <>
-                <button
-                  style={{ ...styles.navLink, ...(location.pathname === "/employer/dashboard" ? styles.navLinkActive : {}) }}
-                  onClick={() => navigate("/employer/dashboard")}
-                >
-                  Panel
-                </button>
-                <button
-                  style={{ ...styles.navLink, ...(location.pathname === "/employer/jobs" ? styles.navLinkActive : {}) }}
-                  onClick={() => navigate("/employer/jobs")}
-                >
-                  İlanlarım
-                </button>
-              </>
-            )}
+            {/* İsStudent İş İlanları butonu sağ tarafa taşındı */}
+            {/* isEmployer butonları da sağ tarafa taşındı */}
           </nav>
         </div>
 
@@ -82,10 +59,93 @@ function Navbar() {
             </>
           ) : (
             <div style={styles.userSection}>
-              <div style={styles.iconBtn}>
-                <span className="material-symbols-rounded" style={styles.iconText}>notifications</span>
-                <span style={styles.notificationBadge}>3</span>
-              </div>
+              {isStudent && (
+                <button
+                  style={{
+                    backgroundColor: "transparent",
+                    color: "var(--primary)",
+                    border: "2px solid var(--primary)",
+                    borderRadius: "8px",
+                    padding: "6px 16px",
+                    fontWeight: "700",
+                    fontSize: "14px",
+                    cursor: "pointer",
+                    transition: "all 0.2s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "var(--primary)";
+                    e.currentTarget.style.color = "#fff";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.color = "var(--primary)";
+                  }}
+                  onClick={() => navigate("/feed")}
+                >
+                  İş İlanları
+                </button>
+              )}
+
+              {isEmployer && (
+                <>
+                  <button
+                    style={{
+                      backgroundColor: location.pathname === "/employer/dashboard" ? "var(--primary)" : "transparent",
+                      color: location.pathname === "/employer/dashboard" ? "#fff" : "var(--primary)",
+                      border: "2px solid var(--primary)",
+                      borderRadius: "8px",
+                      padding: "6px 16px",
+                      fontWeight: "700",
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (location.pathname !== "/employer/dashboard") {
+                        e.currentTarget.style.backgroundColor = "var(--primary)";
+                        e.currentTarget.style.color = "#fff";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (location.pathname !== "/employer/dashboard") {
+                        e.currentTarget.style.backgroundColor = "transparent";
+                        e.currentTarget.style.color = "var(--primary)";
+                      }
+                    }}
+                    onClick={() => navigate("/employer/dashboard")}
+                  >
+                    Panel
+                  </button>
+                  <button
+                    style={{
+                      backgroundColor: location.pathname === "/employer/jobs" ? "var(--primary)" : "transparent",
+                      color: location.pathname === "/employer/jobs" ? "#fff" : "var(--primary)",
+                      border: "2px solid var(--primary)",
+                      borderRadius: "8px",
+                      padding: "6px 16px",
+                      fontWeight: "700",
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (location.pathname !== "/employer/jobs") {
+                        e.currentTarget.style.backgroundColor = "var(--primary)";
+                        e.currentTarget.style.color = "#fff";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (location.pathname !== "/employer/jobs") {
+                        e.currentTarget.style.backgroundColor = "transparent";
+                        e.currentTarget.style.color = "var(--primary)";
+                      }
+                    }}
+                    onClick={() => navigate("/employer/jobs")}
+                  >
+                    İlanlarım
+                  </button>
+                </>
+              )}
 
               <div style={styles.profileWrapper}>
                 <div style={styles.profileBtn} onClick={() => setDropdownOpen(!dropdownOpen)}>

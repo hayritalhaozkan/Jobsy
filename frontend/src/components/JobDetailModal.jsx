@@ -106,12 +106,12 @@ function JobDetailModal({ jobId, onClose }) {
               <div style={styles.hero}>
                 <h1 style={styles.title}>{job.title}</h1>
                 <div style={styles.subInfo}>
-                  {job.employer_name && (
+                  {job.company_name && (
                     <div style={styles.subInfoItem}>
                       <span className="material-symbols-rounded" style={{ fontSize: '20px' }}>
                         apartment
                       </span>
-                      {job.employer_name}
+                      {job.company_name}
                     </div>
                   )}
                   {/* Avatar row mimicking the pop-up design from image */}
@@ -121,7 +121,7 @@ function JobDetailModal({ jobId, onClose }) {
                     </div>
                     <div style={styles.authorInfo}>
                       <div style={styles.authorName}>
-                        {job.employer_name || "İşveren"} <span style={styles.authorBadge}>İşveren</span>
+                        {job.company_name || "Bilinmeyen İşletme"} <span style={styles.authorBadge}>İşveren</span>
                       </div>
                       <div style={styles.authorDate}>
                         Oluşturulma: {new Date(job.created_at || Date.now()).toLocaleDateString("tr-TR", { day: 'numeric', month: 'short', year: 'numeric'})}
