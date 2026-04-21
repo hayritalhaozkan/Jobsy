@@ -135,13 +135,18 @@ router.post("/register", validate(registerSchema), async (req, res, next) => {
       return res.status(409).json({ message: "Email already exists" });
     }
 
-    // 2) universityId geçerli mi?
-    const uni = await pool.query(
-      "SELECT id, display_name FROM universities WHERE id=$1",
-      [universityId]
-    );
-    if (!uni.rowCount) {
-      return res.status(400).json({ message: "Invalid universityId" });
+    // 2) universityId geçerli mi? (sadece STUDENT için zorunlu)
+    if (role === "STUDENT") {
+      if (!universityId) {
+        return res.status(400).json({ message: "universityId is required for STUDENT" });
+      }
+      const uni = await pool.query(
+        "SELECT id FROM universities WHERE id=$1",
+        [universityId]
+      );
+      if (!uni.rowCount) {
+        return res.status(400).json({ message: "Invalid universityId" });
+      }
     }
 
     // 3) şifreyi hashle

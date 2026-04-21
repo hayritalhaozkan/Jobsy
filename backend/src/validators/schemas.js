@@ -12,7 +12,7 @@ const registerSchema = Joi.object({
   email: Joi.string().email().required(),
 
   password: Joi.string()
-    .min(8)
+    .min(6)
     .max(72)
     .required(),
 
@@ -20,10 +20,17 @@ const registerSchema = Joi.object({
     .valid("STUDENT", "EMPLOYER")
     .required(),
 
+  // STUDENT için zorunlu, EMPLOYER için gönderilmez
   universityId: Joi.number()
     .integer()
     .positive()
-    .required(),
+    .optional()
+    .allow(null),
+
+  // Ek alanlar — Joi validation'dan geçsin diye allowUnknown yerine explicitly izin ver
+  fullName:      Joi.string().optional().allow("", null),
+  companyName:   Joi.string().optional().allow("", null),
+  contactPerson: Joi.string().optional().allow("", null),
 });
 
 /**

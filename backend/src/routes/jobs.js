@@ -243,6 +243,7 @@ router.post(
         contactUrl,
         contactNote,
         companyName,
+        category,
       } = req.body;
 
       if (!title || !companyName || !description || !universityId || !contactPerson) {
@@ -265,6 +266,7 @@ router.post(
         contactUrl: normalizeString(contactUrl),
         contactNote: normalizeString(contactNote),
         companyName: normalizeString(companyName),
+        category: normalizeString(category),
       };
 
       if (
@@ -316,9 +318,10 @@ router.post(
           contact_email,
           contact_url,
           contact_note,
-          company_name
+          company_name,
+          category
         )
-        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
         RETURNING *
         `,
         [
@@ -336,6 +339,7 @@ router.post(
           normalized.contactUrl,
           normalized.contactNote,
           normalized.companyName,
+          normalized.category,
         ]
       );
 
@@ -750,6 +754,7 @@ router.patch(
         contactUrl,
         contactNote,
         companyName,
+        category,
       } = req.body;
 
       const hasAny =
@@ -765,7 +770,8 @@ router.patch(
         contactEmail !== undefined ||
         contactUrl !== undefined ||
         contactNote !== undefined ||
-        companyName !== undefined;
+        companyName !== undefined ||
+        category !== undefined;
 
       if (!hasAny) {
         return res.status(400).json({ message: "No fields provided to update" });
@@ -795,6 +801,8 @@ router.patch(
           contactNote !== undefined ? normalizeString(contactNote) : undefined,
         companyName:
           companyName !== undefined ? normalizeString(companyName) : undefined,
+        category:
+          category !== undefined ? normalizeString(category) : undefined,
       };
 
       if (
@@ -840,8 +848,9 @@ router.patch(
           contact_email = COALESCE($10, contact_email),
           contact_url = COALESCE($11, contact_url),
           contact_note = COALESCE($12, contact_note),
-          company_name = COALESCE($13, company_name)
-        WHERE id = $14
+          company_name = COALESCE($13, company_name),
+          category = COALESCE($14, category)
+        WHERE id = $15
         RETURNING *
         `,
         [
@@ -851,17 +860,14 @@ router.patch(
           normalized.salary === undefined ? null : normalized.salary,
           normalized.workSchedule === undefined ? null : normalized.workSchedule,
           normalized.address === undefined ? null : normalized.address,
-          normalized.contactPerson === undefined
-            ? null
-            : normalized.contactPerson,
-          normalized.contactWhatsapp === undefined
-            ? null
-            : normalized.contactWhatsapp,
+          normalized.contactPerson === undefined ? null : normalized.contactPerson,
+          normalized.contactWhatsapp === undefined ? null : normalized.contactWhatsapp,
           normalized.contactPhone === undefined ? null : normalized.contactPhone,
           normalized.contactEmail === undefined ? null : normalized.contactEmail,
           normalized.contactUrl === undefined ? null : normalized.contactUrl,
           normalized.contactNote === undefined ? null : normalized.contactNote,
           normalized.companyName === undefined ? null : normalized.companyName,
+          normalized.category === undefined ? null : normalized.category,
           id,
         ]
       );

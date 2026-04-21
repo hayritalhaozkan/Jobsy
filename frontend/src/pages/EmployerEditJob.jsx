@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import { fetchUniversities } from "../api/universities";
 import { fetchJobDetail, updateJob } from "../api/jobs";
 import { useToast } from "../context/ToastContext";
+import { JOB_CATEGORIES } from "../constants/categories";
 
 function EmployerEditJob() {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ function EmployerEditJob() {
     contactEmail: "",
     contactUrl: "",
     contactNote: "",
+    category: "",
   });
 
   useEffect(() => {
@@ -56,6 +58,7 @@ function EmployerEditJob() {
           contactEmail: jobData.contact_email || "",
           contactUrl: jobData.contact_url || "",
           contactNote: jobData.contact_note || "",
+          category: jobData.category || "",
         });
       } catch (err) {
         console.error("Edit job load error:", err);
@@ -129,6 +132,7 @@ function EmployerEditJob() {
         contactEmail: form.contactEmail,
         contactUrl: form.contactUrl,
         contactNote: form.contactNote,
+        category: form.category || null,
       });
 
       showToast({
@@ -213,6 +217,23 @@ function EmployerEditJob() {
                     {universities.map((uni) => (
                       <option key={uni.id} value={uni.id}>
                         {uni.display_name || uni.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label style={styles.label}>Kategori</label>
+                  <select
+                    name="category"
+                    value={form.category}
+                    onChange={handleChange}
+                    style={styles.select}
+                  >
+                    <option value="">Kategori seç</option>
+                    {JOB_CATEGORIES.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.label}
                       </option>
                     ))}
                   </select>

@@ -29,6 +29,8 @@
     "dev": "nodemon -L --ignore node_modules/ --watch src --ext js,json src/index.js",
     "start": "node src/index.js",
     "migrate": "node migrations/run.js",
+    "seed:universities": "node seeds/seed_universities.js",
+    "setup": "node migrations/run.js && node seeds/seed_universities.js",
     "test": "jest"
   }
 }

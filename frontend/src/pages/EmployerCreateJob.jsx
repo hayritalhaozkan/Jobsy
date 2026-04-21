@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import { fetchUniversities } from "../api/universities";
 import { createJob } from "../api/jobs";
 import { useToast } from "../context/ToastContext";
+import { JOB_CATEGORIES } from "../constants/categories";
 
 function EmployerCreateJob() {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ function EmployerCreateJob() {
     contactEmail: "",
     contactUrl: "",
     contactNote: "",
+    category: "",
   });
 
   useEffect(() => {
@@ -103,6 +105,7 @@ function EmployerCreateJob() {
         contactUrl: form.contactUrl,
         contactNote: form.contactNote,
         companyName: form.companyName,
+        category: form.category || null,
       });
 
       showToast({
@@ -184,6 +187,23 @@ function EmployerCreateJob() {
                   {universities.map((uni) => (
                     <option key={uni.id} value={uni.id}>
                       {uni.display_name || uni.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label style={styles.label}>Kategori</label>
+                <select
+                  name="category"
+                  value={form.category}
+                  onChange={handleChange}
+                  style={styles.select}
+                >
+                  <option value="">Kategori seç</option>
+                  {JOB_CATEGORIES.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.label}
                     </option>
                   ))}
                 </select>
