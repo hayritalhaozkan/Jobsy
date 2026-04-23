@@ -5,6 +5,7 @@ import { fetchUniversities } from "../api/universities";
 import { createJob } from "../api/jobs";
 import { useToast } from "../context/ToastContext";
 import { JOB_CATEGORIES } from "../constants/categories";
+import { MapPicker } from "../components/Map";
 
 function EmployerCreateJob() {
   const navigate = useNavigate();
@@ -28,6 +29,8 @@ function EmployerCreateJob() {
     contactUrl: "",
     contactNote: "",
     category: "",
+    lat: null,
+    lng: null,
   });
 
   useEffect(() => {
@@ -106,6 +109,8 @@ function EmployerCreateJob() {
         contactNote: form.contactNote,
         companyName: form.companyName,
         category: form.category || null,
+        lat: form.lat,
+        lng: form.lng,
       });
 
       showToast({
@@ -239,6 +244,15 @@ function EmployerCreateJob() {
                   onChange={handleChange}
                   style={styles.input}
                   placeholder="Örn: Selçuklu / Konya"
+                />
+              </div>
+
+              <div style={styles.fullWidth}>
+                <label style={styles.label}>Harita Konumu</label>
+                <MapPicker 
+                  lat={form.lat} 
+                  lng={form.lng} 
+                  onChange={(lat, lng) => setForm((prev) => ({ ...prev, lat, lng }))} 
                 />
               </div>
 

@@ -56,6 +56,7 @@ app.get("/api/v1/admin/ping", authenticateToken, authorizeRoles("ADMIN"), (req, 
 app.use("/api/v1/universities", universitiesRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/jobs", jobsRoutes);
+app.use("/api/v1/profile", require("./routes/profile"));
 
 //404 handler
 app.use((req, res) => res.status(404).json({ error: "Not Found" }));

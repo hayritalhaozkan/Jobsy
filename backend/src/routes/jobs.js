@@ -244,6 +244,8 @@ router.post(
         contactNote,
         companyName,
         category,
+        lat,
+        lng,
       } = req.body;
 
       if (!title || !companyName || !description || !universityId || !contactPerson) {
@@ -267,6 +269,8 @@ router.post(
         contactNote: normalizeString(contactNote),
         companyName: normalizeString(companyName),
         category: normalizeString(category),
+        lat: lat ? parseFloat(lat) : null,
+        lng: lng ? parseFloat(lng) : null,
       };
 
       if (
@@ -319,9 +323,11 @@ router.post(
           contact_url,
           contact_note,
           company_name,
-          category
+          category,
+          lat,
+          lng
         )
-        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
         RETURNING *
         `,
         [
@@ -340,6 +346,8 @@ router.post(
           normalized.contactNote,
           normalized.companyName,
           normalized.category,
+          normalized.lat,
+          normalized.lng,
         ]
       );
 

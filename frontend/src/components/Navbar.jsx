@@ -161,9 +161,14 @@ function Navbar() {
                 {dropdownOpen && (
                   <div style={styles.dropdown}>
                     {isStudent && (
-                      <div style={styles.dropdownItem} onClick={() => { setDropdownOpen(false); navigate("/saved-jobs"); }}>
-                        Kaydedilen İlanlar
-                      </div>
+                      <>
+                        <div style={styles.dropdownItem} onClick={() => { setDropdownOpen(false); navigate("/profile"); }}>
+                          Profilim
+                        </div>
+                        <div style={styles.dropdownItem} onClick={() => { setDropdownOpen(false); navigate("/saved-jobs"); }}>
+                          Kaydedilen İlanlar
+                        </div>
+                      </>
                     )}
                     <div style={styles.dropdownSeparator}></div>
                     <div style={styles.dropdownItem} onClick={handleLogout}>

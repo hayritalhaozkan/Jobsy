@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchJobDetail, checkJobSaved, saveJob, unsaveJob } from "../api/jobs";
 import { useToast } from "../context/ToastContext";
+import { MapView } from "./Map";
 
 function JobDetailModal({ jobId, onClose }) {
   const [job, setJob] = useState(null);
@@ -186,6 +187,17 @@ function JobDetailModal({ jobId, onClose }) {
                   {job.description || "Açıklama bulunmuyor."}
                 </p>
               </section>
+
+              {/* Map View */}
+              {job.lat && job.lng && (
+                <section style={styles.section}>
+                  <h2 style={styles.sectionTitle}>
+                    <span className="material-symbols-rounded">map</span>
+                    Konum
+                  </h2>
+                  <MapView lat={job.lat} lng={job.lng} popupText={job.company_name || job.title} />
+                </section>
+              )}
 
               {/* Contact Info */}
               <section style={styles.section}>

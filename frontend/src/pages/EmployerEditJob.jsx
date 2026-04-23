@@ -5,6 +5,7 @@ import { fetchUniversities } from "../api/universities";
 import { fetchJobDetail, updateJob } from "../api/jobs";
 import { useToast } from "../context/ToastContext";
 import { JOB_CATEGORIES } from "../constants/categories";
+import { MapPicker } from "../components/Map";
 
 function EmployerEditJob() {
   const navigate = useNavigate();
@@ -30,6 +31,8 @@ function EmployerEditJob() {
     contactUrl: "",
     contactNote: "",
     category: "",
+    lat: null,
+    lng: null,
   });
 
   useEffect(() => {
@@ -59,6 +62,8 @@ function EmployerEditJob() {
           contactUrl: jobData.contact_url || "",
           contactNote: jobData.contact_note || "",
           category: jobData.category || "",
+          lat: jobData.lat || null,
+          lng: jobData.lng || null,
         });
       } catch (err) {
         console.error("Edit job load error:", err);
@@ -133,6 +138,8 @@ function EmployerEditJob() {
         contactUrl: form.contactUrl,
         contactNote: form.contactNote,
         category: form.category || null,
+        lat: form.lat,
+        lng: form.lng,
       });
 
       showToast({
@@ -269,6 +276,15 @@ function EmployerEditJob() {
                     onChange={handleChange}
                     style={styles.input}
                     placeholder="Örn: Selçuklu / Konya"
+                  />
+                </div>
+
+                <div style={styles.fullWidth}>
+                  <label style={styles.label}>Harita Konumu</label>
+                  <MapPicker 
+                    lat={form.lat} 
+                    lng={form.lng} 
+                    onChange={(lat, lng) => setForm((prev) => ({ ...prev, lat, lng }))} 
                   />
                 </div>
 

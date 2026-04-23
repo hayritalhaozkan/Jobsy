@@ -34,8 +34,10 @@ async function migrate() {
       created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
     );
 
-    ALTER TABLE users
-      ADD COLUMN IF NOT EXISTS university_id INTEGER REFERENCES universities(id) ON DELETE SET NULL;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS university_id INTEGER REFERENCES universities(id) ON DELETE SET NULL;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS full_name     VARCHAR(100);
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS phone         VARCHAR(20);
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS bio           TEXT;
   `);
   console.log("✅ users");
 
@@ -66,6 +68,8 @@ async function migrate() {
     ALTER TABLE jobs ADD COLUMN IF NOT EXISTS salary           VARCHAR(100);
     ALTER TABLE jobs ADD COLUMN IF NOT EXISTS work_schedule    VARCHAR(255);
     ALTER TABLE jobs ADD COLUMN IF NOT EXISTS address          TEXT;
+    ALTER TABLE jobs ADD COLUMN IF NOT EXISTS lat              DOUBLE PRECISION;
+    ALTER TABLE jobs ADD COLUMN IF NOT EXISTS lng              DOUBLE PRECISION;
     ALTER TABLE jobs ADD COLUMN IF NOT EXISTS contact_person   VARCHAR(255);
     ALTER TABLE jobs ADD COLUMN IF NOT EXISTS contact_whatsapp VARCHAR(50);
     ALTER TABLE jobs ADD COLUMN IF NOT EXISTS contact_phone    VARCHAR(50);
